@@ -6,7 +6,7 @@
     </x-slot>
 
     <!-- Timeline Progress -->
-    <div class="bg-white rounded-xl shadow-sm p-6 mb-8">
+    <div class="bg-white rounded-xl shadow-sm p-6 mb-8 fade-in-up">
         <h3 class="text-lg font-semibold text-utgz-primary mb-6">Etapas del Proceso</h3>
         <div class="relative">
             <div class="overflow-hidden h-2 mb-4 text-xs flex rounded bg-gray-200">
@@ -22,7 +22,7 @@
     </div>
 
     <!-- Main Action Card -->
-    <div class="bg-white rounded-xl shadow-sm p-8 text-center max-w-2xl mx-auto border-t-4 border-utgz-accent">
+    <div class="bg-white rounded-xl shadow-sm p-8 text-center max-w-2xl mx-auto border-t-4 border-utgz-accent fade-in-up delay-100">
         <div class="w-20 h-20 mx-auto bg-blue-50 rounded-full flex items-center justify-center text-utgz-accent mb-4">
             <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
         </div>

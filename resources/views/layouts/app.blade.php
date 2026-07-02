@@ -14,6 +14,24 @@
         
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+        <style>
+            .fade-in-up {
+                animation: fadeInUp 0.5s ease-out forwards;
+                opacity: 0;
+                transform: translateY(15px);
+            }
+            .delay-100 { animation-delay: 100ms; }
+            .delay-200 { animation-delay: 200ms; }
+            .delay-300 { animation-delay: 300ms; }
+
+            @keyframes fadeInUp {
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+        </style>
     </head>
     <body class="font-sans antialiased text-utgz-text bg-utgz-bg h-screen flex overflow-hidden">
         

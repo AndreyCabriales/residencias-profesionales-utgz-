@@ -6,8 +6,8 @@
     </x-slot>
 
     <!-- Quick Stats -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div class="bg-white rounded-xl shadow-sm p-6 flex items-center">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 fade-in-up">
+        <div class="bg-white rounded-xl shadow-sm p-6 flex items-center transition-transform hover:scale-105">
             <div class="w-12 h-12 rounded-full bg-utgz-bg flex items-center justify-center text-utgz-accent">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
             </div>
@@ -17,7 +17,7 @@
             </div>
         </div>
 
-        <div class="bg-white rounded-xl shadow-sm p-6 flex items-center">
+        <div class="bg-white rounded-xl shadow-sm p-6 flex items-center transition-transform hover:scale-105">
             <div class="w-12 h-12 rounded-full bg-utgz-bg flex items-center justify-center text-utgz-accent">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
             </div>
@@ -27,7 +27,7 @@
             </div>
         </div>
 
-        <div class="bg-white rounded-xl shadow-sm p-6 flex items-center">
+        <div class="bg-white rounded-xl shadow-sm p-6 flex items-center transition-transform hover:scale-105">
             <div class="w-12 h-12 rounded-full bg-orange-50 flex items-center justify-center text-utgz-warning">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
             </div>
@@ -39,7 +39,7 @@
     </div>
 
     <!-- Table -->
-    <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+    <div class="bg-white rounded-xl shadow-sm overflow-hidden fade-in-up delay-100">
         <div class="px-6 py-4 border-b border-gray-200">
             <h3 class="text-lg font-semibold text-utgz-primary">Últimos Alumnos Registrados</h3>
         </div>
