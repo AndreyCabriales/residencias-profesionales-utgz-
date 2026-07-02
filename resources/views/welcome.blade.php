@@ -61,7 +61,7 @@
     <main class="flex-1 flex items-center justify-center relative z-10 px-4 sm:px-6 lg:px-8">
         <div class="text-center max-w-4xl mx-auto">
             <div class="inline-block mb-4 px-4 py-1.5 rounded-full bg-white/10 border border-white/20 backdrop-blur-md text-sm font-medium fade-in-up delay-100">
-                ✨ Plataforma de Gestión Académica
+                 Plataforma de Gestión Académica
             </div>
             <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 fade-in-up delay-200 leading-tight">
                 Sistema de Registro de <br>
