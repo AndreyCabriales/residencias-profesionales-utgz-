@@ -6,8 +6,10 @@ use Illuminate\Http\Request;
 use App\Repositories\Contracts\DocumentoRepositoryInterface;
 use App\Enums\DocumentoEstado;
 use App\Events\DocumentoRevisado;
+use App\Models\Documento;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Gate;
 
 class AsesorDocumentoController extends Controller
 {
@@ -20,12 +22,19 @@ class AsesorDocumentoController extends Controller
         $documento = $this->documentoRepository->findById($id);
 
         if (!$documento) {
-            abort(404, 'Documento no encontrado');
+            return redirect()->route('asesor.dashboard')->with('error', 'Documento no encontrado.');
+        }
+        
+        // Política de seguridad para prevenir IDOR
+        if (!Gate::allows('view', $documento)) {
+            return redirect()->route('asesor.dashboard')
+                ->with('error', 'Acceso denegado: Este documento no pertenece a uno de tus alumnos asignados.');
         }
 
         // Verificar que el archivo exista en storage/app/documentos (disco local)
         if (!Storage::disk('local')->exists($documento->archivo)) {
-            abort(404, 'El archivo físico no se encuentra en el servidor.');
+            return redirect()->route('asesor.dashboard')
+                ->with('error', 'El archivo físico no se encuentra en el servidor.');
         }
 
         return Storage::disk('local')->download($documento->archivo);
@@ -42,6 +51,12 @@ class AsesorDocumentoController extends Controller
         
         if (!$documento) {
             return back()->with('error', 'Documento no encontrado.');
+        }
+
+        // Política de seguridad para prevenir modificación de otros documentos
+        if (!Gate::allows('review', $documento)) {
+            return redirect()->route('asesor.dashboard')
+                ->with('error', 'Acceso denegado: No tienes permisos para revisar este documento.');
         }
 
         $nuevoEstado = $request->accion === 'aprobar' 
