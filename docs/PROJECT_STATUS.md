@@ -10,26 +10,20 @@ Construir una plataforma web escalable, segura y mantenible para digitalizar y a
 
 ## 3. Funcionalidades
 ### Terminadas (Sprint 1, 2 y 3)
-- [x] Arquitectura de base de datos y migraciones (Alumnos, Asesores, Asignaciones, Etapas, Documentos, Notificaciones, CompanyAdvisors).
-- [x] Configuración de Roles y Permisos (Spatie Laravel-Permission).
-- [x] Seeders realistas (Asesores reales de UTGZ, etapas oficiales FOR-06-12).
-- [x] Instalación de Laravel Breeze y rediseño UI Split-Screen para Login interactivo.
-- [x] Layout principal responsivo con Sidebar dinámico y animaciones.
-- [x] Dashboard Coordinador: Gráficas (Chart.js), Estadísticas en tiempo real y Actividad reciente.
-- [x] Dashboard Alumno: Grid de tarjetas informativas (Estado, Asesores, Empresa, Actualización).
-- [x] Dashboard Asesor: Gestión de documentos pendientes.
-- [x] **Módulo de Documentos:** Subida de archivos, almacenamiento local y validación.
-- [x] **Captura de Empresa:** Solicitud de datos de empresa y Asesor Organizacional (`CompanyAdvisor`) si la etapa es FOR-06-12.
-- [x] **Automatización de Etapas:** Implementación de Events & Listeners (`DocumentoRevisado` y `AvanzarEtapaAlumno`).
-- [x] **Arquitectura Limpia:** Repositorios (`Alumno`, `Documento`, `Notificacion`), Servicios, Policies.
-- [x] Traducción completa y branding en configuración de Perfil de Usuario.
-- [x] **Políticas y Seguridad (Policies):** Proteger la visualización y edición de documentos/usuarios para que nadie vea datos que no le corresponden.
+## 2. Estado Actual del Proyecto (Cierre Funcional)
+El proyecto ha alcanzado un **100% del núcleo funcional** acordado. Se ha cerrado el ciclo completo del alumno desde su registro hasta la liberación de sus residencias.
 
-### Pendientes (Sprints 4-5)
-- [ ] **CRUDs de Administración:** Vistas y controladores para que el Coordinador asigne alumnos a asesores de manera gráfica.
-- [ ] **Módulo de Observaciones:** Permitir que los asesores dejen comentarios específicos cuando rechacen un documento.
-- [ ] **Notificaciones por Correo:** Enviar alertas (SMTP) cuando un documento se apruebe o rechace.
-- [ ] **Firma y Reportes PDF:** Generación de formatos pre-llenados en PDF (Exportación).
+### ✅ Hitos Completados (Sprint Final)
+1. **Módulo de Observaciones:** El asesor ahora puede dejar *feedback* obligatorio al rechazar un documento, y el alumno lo visualiza de forma destacada (banner rojo) en su dashboard para corregirlo.
+2. **Finalización de Residencia:** Al aprobarse el documento de la última etapa (ej. Carta de Liberación), el sistema automáticamente cambia el estado del alumno a `Finalizada`, oculta el flujo de subida y muestra su comprobante de finalización con fecha.
+3. **Métricas de Cierre:** El dashboard del coordinador ahora incluye la estadística en tiempo real de los alumnos que ya terminaron.
+4. **Vulnerabilidades Críticas Selladas (IDOR):** Las policies validan asignaciones en tiempo real y el routing de archivos protege contra accesos no autorizados.
+
+### ⏳ Pendientes / Fuera de Alcance Actual
+- Generación de documentos PDF pre-llenados.
+- Vista previa embebida del PDF sin descargar.
+- SweetAlert2 para confirmaciones de borrado de archivos.
+- Envío de correos SMTP reales (actualmente manejados por driver log). (Exportación).
 
 ## 4. Seguridad
 - Implementación de `DocumentoPolicy`.

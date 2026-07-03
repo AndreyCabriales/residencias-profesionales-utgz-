@@ -24,16 +24,29 @@ class AvanzarEtapaAlumno
     {
         $documento = $event->documento;
 
-        // Si el documento fue aprobado, el alumno avanza a la siguiente etapa
+        // Si el documento fue aprobado, el alumno avanza a la siguiente etapa o finaliza
         if ($documento->estado === DocumentoEstado::Aprobado) {
             
-            // Supongamos que las etapas son secuenciales (1, 2, 3...)
-            // En la vida real aquí verificaríamos en la BD cuál es la etapa "siguiente"
-            // Por simplicidad del modelo actual, le sumamos 1 a su etapa_id.
-            $nuevaEtapa = $documento->etapa_id + 1;
+            $etapaActual = $documento->etapa;
+            $maxOrden = \App\Models\Etapa::where('activo', true)->max('orden');
             
-            // Usamos el repositorio para actualizar al alumno
-            $this->alumnoRepository->updateEtapa($documento->alumno_id, $nuevaEtapa);
+            if ($etapaActual->orden >= $maxOrden) {
+                // Es la última etapa, finalizar residencia
+                $alumno = $documento->alumno;
+                $alumno->estado_residencia = \App\Enums\ResidenciaEstado::Finalizada;
+                $alumno->fecha_finalizacion = now();
+                $alumno->save();
+            } else {
+                // Avanzar a la siguiente etapa (buscamos la etapa con el siguiente orden)
+                $siguienteEtapa = \App\Models\Etapa::where('activo', true)
+                    ->where('orden', '>', $etapaActual->orden)
+                    ->orderBy('orden', 'asc')
+                    ->first();
+                    
+                if ($siguienteEtapa) {
+                    $this->alumnoRepository->updateEtapa($documento->alumno_id, $siguienteEtapa->id);
+                }
+            }
         }
     }
 }

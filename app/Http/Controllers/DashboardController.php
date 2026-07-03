@@ -20,6 +20,8 @@ class DashboardController extends Controller
     {
         $totalAlumnos = \App\Models\Alumno::count();
         $totalAsesores = \App\Models\Asesor::count();
+        $alumnosEnProceso = \App\Models\Alumno::where('estado_residencia', \App\Enums\ResidenciaEstado::EnProceso)->count();
+        $alumnosFinalizados = \App\Models\Alumno::where('estado_residencia', \App\Enums\ResidenciaEstado::Finalizada)->count();
         
         $documentosPendientes = \App\Models\Documento::where('estado', \App\Enums\DocumentoEstado::Pendiente)->count();
         $documentosAprobados = \App\Models\Documento::where('estado', \App\Enums\DocumentoEstado::Aprobado)->count();
@@ -30,6 +32,8 @@ class DashboardController extends Controller
         return view('coordinador.dashboard', compact(
             'totalAlumnos',
             'totalAsesores',
+            'alumnosEnProceso',
+            'alumnosFinalizados',
             'documentosPendientes',
             'documentosAprobados',
             'documentosRechazados',

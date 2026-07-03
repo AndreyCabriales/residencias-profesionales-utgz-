@@ -44,6 +44,15 @@
                 {{ session('error') }}
             </div>
         @endif
+        @if($errors->any())
+            <div class="m-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative text-sm" role="alert">
+                <ul class="list-disc list-inside">
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
 
         @if(isset($documentosPendientes) && count($documentosPendientes) > 0)
             <div class="overflow-x-auto">

@@ -35,7 +35,9 @@ class AsesorDocumentoController extends Controller
     {
         $request->validate([
             'accion' => 'required|in:aprobar,rechazar',
-            'retroalimentacion' => 'nullable|string|max:1000'
+            'retroalimentacion' => 'required_if:accion,rechazar|nullable|string|max:1000'
+        ], [
+            'retroalimentacion.required_if' => 'Debe escribir una observación indicando al alumno por qué rechazó el documento.'
         ]);
 
         // Política de seguridad para prevenir evaluación no autorizada
