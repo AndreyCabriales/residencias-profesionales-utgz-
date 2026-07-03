@@ -21,15 +21,21 @@ Construir una plataforma web escalable, segura y mantenible para digitalizar y a
 - [x] **Módulo de Documentos:** Subida de archivos, almacenamiento local y validación.
 - [x] **Captura de Empresa:** Solicitud de datos de empresa y Asesor Organizacional (`CompanyAdvisor`) si la etapa es FOR-06-12.
 - [x] **Automatización de Etapas:** Implementación de Events & Listeners (`DocumentoRevisado` y `AvanzarEtapaAlumno`).
-- [x] **Arquitectura Limpia:** Repositorios (`Alumno`, `Documento`, `Notificacion`), Servicios, Policies (En progreso).
+- [x] **Arquitectura Limpia:** Repositorios (`Alumno`, `Documento`, `Notificacion`), Servicios, Policies.
 - [x] Traducción completa y branding en configuración de Perfil de Usuario.
+- [x] **Políticas y Seguridad (Policies):** Proteger la visualización y edición de documentos/usuarios para que nadie vea datos que no le corresponden.
 
 ### Pendientes (Sprints 4-5)
-- [ ] **Políticas y Seguridad (Policies):** Proteger la visualización y edición de documentos/usuarios para que nadie vea datos que no le corresponden.
 - [ ] **CRUDs de Administración:** Vistas y controladores para que el Coordinador asigne alumnos a asesores de manera gráfica.
 - [ ] **Módulo de Observaciones:** Permitir que los asesores dejen comentarios específicos cuando rechacen un documento.
 - [ ] **Notificaciones por Correo:** Enviar alertas (SMTP) cuando un documento se apruebe o rechace.
 - [ ] **Firma y Reportes PDF:** Generación de formatos pre-llenados en PDF (Exportación).
+
+## 4. Seguridad
+- Implementación de `DocumentoPolicy`.
+- Protección contra IDOR mediante Route Model Binding y validación en Gate.
+- Cobertura total de permisos View / Update / Delete / Evaluate.
+- Los documentos son almacenados de forma privada usando el disco `local` y accedidos únicamente mediante Controladores validados.
 
 ## 4. Arquitectura Implementada y Proyectada
 El proyecto sigue el patrón **MVC extendido**, garantizando *Clean Architecture* y separación de responsabilidades:

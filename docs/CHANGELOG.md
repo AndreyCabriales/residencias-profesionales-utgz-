@@ -4,6 +4,9 @@ Este archivo rastrea todos los cambios notables realizados en el proyecto.
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/), y este proyecto se adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [v0.3] - 2026-07-03 (Sprint 3)
+### Seguridad
+- **DocumentoPolicy implementada.** Protección frente a IDOR mediante Route Model Binding y Gate. Previene manipulación de URLs para acceder o evaluar documentos de otros asesores/alumnos. Se corrigió un bug que impedía a los alumnos eliminar sus propios documentos pendientes.
+
 ### Añadido
 - **Dashboards Definitivos:** Gráfica de Doughnut (Chart.js) y Actividad Reciente para el Coordinador. Grid analítico de 5 tarjetas para el Alumno.
 - **Entidad CompanyAdvisor:** Relación 1 a 1 para capturar de forma normalizada los datos de la Empresa, Asesor Organizacional y Puesto. Solo se solicita en la etapa FOR-06-12.

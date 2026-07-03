@@ -45,3 +45,13 @@ Este documento registra las decisiones arquitectÃ³nicas importantes tomadas dura
 **Consecuencias:**
 - Interfaz muy moderna ("wow effect") que incentiva el uso de la plataforma.
 - El cÃ³digo HTML/Blade puede volverse verboso por la cantidad de clases, requiriendo extraer patrones a componentes (`<x-card>`) en un futuro.
+
+## ADR-006: Implementación de Policies para prevenir IDOR
+
+**Fecha:** Julio 2026
+**Contexto:** Existía una vulnerabilidad crítica de IDOR donde un usuario malintencionado podía modificar la URL (ej. /asesor/documentos/5/descargar) y acceder o evaluar documentos de otros alumnos o asesores.
+**Decisión:** Se centralizó la lógica de autorización creando \DocumentoPolicy\ y aplicando Route Model Binding implícito en las rutas. En lugar de dispersar sentencias \if\ por los controladores para validar propiedad, el controlador simplemente delega a \Gate::authorize()\.
+**Consecuencias:**
+- Reducción del código de validación en controladores.
+- Protección robusta y centralizada contra ataques IDOR.
+- Menos propensión a errores humanos en futuros desarrollos.
