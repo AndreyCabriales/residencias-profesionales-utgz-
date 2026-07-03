@@ -1,59 +1,62 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
-
 <p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+  <img src="public/build/assets/utgz_logo-Bg5l8Q9u.png" alt="UTGZ Logo" width="200" />
 </p>
 
-## About Laravel
+# Sistema de Residencias Profesionales UTGZ
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Plataforma web institucional desarrollada para la **Universidad Tecnológica de Gutiérrez Zamora (UTGZ)**. Este sistema automatiza y digitaliza el seguimiento del proceso de residencias profesionales, eliminando el papeleo físico y centralizando la comunicación entre Alumnos, Asesores y Coordinadores.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 🚀 Características Principales
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- **Gestión Multi-Rol:** Paneles de control independientes y protegidos para Coordinadores, Asesores y Alumnos.
+- **Flujo Documental Automatizado:** Subida física de PDFs, validación de formatos (FOR-06-12) y transición automática de etapas mediante arquitectura basada en Eventos.
+- **Asignaciones Claras:** Los alumnos están vinculados 1-a-1 con un Asesor Académico y un Asesor Organizacional (Empresa).
+- **Dashboard Analítico:** Gráficas en tiempo real (Chart.js) y flujo de actividad para el coordinador.
+- **Diseño Aesthetic Institucional:** Desarrollado con TailwindCSS respetando los lineamientos gráficos de la universidad, animaciones sutiles y microinteracciones.
 
-## Learning Laravel
+## 🛠️ Stack Tecnológico (Clean Architecture)
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+- **Backend:** PHP 8.2 + Laravel 11.
+- **Arquitectura:** Repositories, Services, Events, Policies.
+- **Frontend:** Blade + TailwindCSS + Alpine.js.
+- **Base de Datos:** MySQL 8.
+- **Gestión de Permisos:** Spatie Laravel-Permission.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+*(Para más detalle técnico, consulta `docs/TECH_STACK.md` y `docs/SYSTEM_OVERVIEW.md`).*
 
-## Laravel Sponsors
+## 📚 Documentación Técnica
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+La documentación extensa del proyecto vive en la carpeta `docs/`. Está pensada para capacitar a cualquier nuevo desarrollador que entre al equipo.
 
-### Premium Partners
+- [Visión General (System Overview)](docs/SYSTEM_OVERVIEW.md)
+- [Base de Datos (ERD y Modelos)](docs/DATABASE.md)
+- [Roles y Permisos](docs/ROLES_AND_PERMISSIONS.md)
+- [Endpoints y API](docs/API.md)
+- [Stack Tecnológico](docs/TECH_STACK.md)
+- [Guía de Despliegue Local](docs/DEPLOYMENT.md)
+- [Historial de Versiones (Changelog)](docs/CHANGELOG.md)
+- [Backlog (V2)](docs/BACKLOG.md)
+- [Decisiones de Arquitectura (ADRs)](docs/ARCHITECTURE_DECISIONS.md)
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+## 💻 Instalación Local
 
-## Contributing
+### Requisitos
+- PHP 8.2+, Composer, Node.js, MySQL.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### Pasos
+1. Clona el repositorio: `git clone https://github.com/utgz/residencias-profesionales-utgz.git`
+2. Instala dependencias Backend: `composer install`
+3. Instala dependencias Frontend: `npm install`
+4. Configura tu `.env` (credenciales DB).
+5. Genera la key: `php artisan key:generate`
+6. Corre las migraciones y llena los datos prueba: `php artisan migrate:fresh --seed`
+7. Compila los assets (Terminal 1): `npm run dev`
+8. Levanta el servidor (Terminal 2): `php artisan serve`
 
-## Code of Conduct
+*(Consulta `docs/DEPLOYMENT.md` para más información).*
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## 🔒 Estado del Proyecto
+**Sprint 3 Completado.** El sistema se encuentra en fase Beta funcional (Módulo de documentos, asignaciones, subidas y evaluaciones automatizadas). Próximas iteraciones se documentan en `docs/BACKLOG.md`.
 
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## 📜 Licencia
+Este software es propiedad de la Universidad Tecnológica de Gutiérrez Zamora (UTGZ) y se distribuye con fines institucionales y académicos.
