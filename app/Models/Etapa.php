@@ -5,5 +5,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class Etapa extends Model {
     protected $table = 'etapas';
-    protected $fillable = ['nombre', 'orden'];
+    protected $fillable = ['codigo', 'nombre', 'descripcion', 'tipo', 'orden', 'activo'];
 }

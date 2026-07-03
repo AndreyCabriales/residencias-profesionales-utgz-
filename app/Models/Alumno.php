@@ -10,4 +10,5 @@ class Alumno extends Model {
     public function etapa() { return $this->belongsTo(Etapa::class); }
     public function documentos() { return $this->hasMany(Documento::class); }
     public function asignacion() { return $this->hasOne(Asignacion::class); }
+    public function companyAdvisor() { return $this->hasOne(CompanyAdvisor::class); }
 }

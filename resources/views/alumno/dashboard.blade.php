@@ -21,8 +21,69 @@
         </div>
     </div>
 
+    <!-- Header and Greeting -->
+    <div class="mb-8 fade-in-up">
+        <h2 class="text-2xl font-bold text-gray-800">Hola, {{ Auth::user()->name }} 👋</h2>
+        <p class="text-gray-500 mt-1">Actualmente estás en: <span class="font-semibold text-utgz-primary">{{ $alumno->etapa->nombre }} ({{ $alumno->etapa->codigo }})</span></p>
+    </div>
+
+    <!-- Cards Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8 fade-in-up delay-100">
+        <!-- Estado -->
+        <div class="bg-white p-5 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-1">
+            <h4 class="text-sm font-medium text-gray-500 mb-2">Estado Actual</h4>
+            @if($tienePendiente)
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">
+                    En revisión
+                </span>
+            @elseif(count($documentos) > 0 && $documentos->first()->estado === \App\Enums\DocumentoEstado::Aprobado)
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                    Aprobado
+                </span>
+            @elseif(count($documentos) > 0 && $documentos->first()->estado === \App\Enums\DocumentoEstado::Rechazado)
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium bg-red-100 text-red-800">
+                    Corrección
+                </span>
+            @else
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium bg-gray-100 text-gray-800">
+                    Pendiente
+                </span>
+            @endif
+        </div>
+
+        <!-- Asesor Académico -->
+        <div class="bg-white p-5 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-1">
+            <h4 class="text-sm font-medium text-gray-500 mb-1">Académico</h4>
+            <p class="font-semibold text-gray-800 truncate" title="{{ $alumno->asignacion->asesor->user->name ?? 'No asignado' }}">{{ $alumno->asignacion->asesor->user->name ?? 'No asignado' }}</p>
+        </div>
+
+        <!-- Asesor Organizacional -->
+        <div class="bg-white p-5 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-1">
+            <h4 class="text-sm font-medium text-gray-500 mb-1">Organizacional</h4>
+            <p class="font-semibold text-gray-800 truncate" title="{{ $alumno->companyAdvisor->nombre ?? 'Pendiente' }}">{{ $alumno->companyAdvisor->nombre ?? 'Pendiente' }}</p>
+        </div>
+
+        <!-- Empresa -->
+        <div class="bg-white p-5 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-1">
+            <h4 class="text-sm font-medium text-gray-500 mb-1">Empresa</h4>
+            <p class="font-semibold text-gray-800 truncate" title="{{ $alumno->companyAdvisor->empresa ?? 'No registrada' }}">{{ $alumno->companyAdvisor->empresa ?? 'No registrada' }}</p>
+        </div>
+
+        <!-- Última Actualización -->
+        <div class="bg-white p-5 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-1">
+            <h4 class="text-sm font-medium text-gray-500 mb-1">Actualización</h4>
+            <p class="font-semibold text-gray-800">
+                @if(count($documentos) > 0)
+                    {{ $documentos->first()->updated_at->diffForHumans() }}
+                @else
+                    Sin actividad
+                @endif
+            </p>
+        </div>
+    </div>
+
     <!-- Main Action Card -->
-    <div class="bg-white rounded-xl shadow-sm p-8 text-center max-w-2xl mx-auto border-t-4 border-utgz-accent fade-in-up delay-100">
+    <div class="bg-white rounded-xl shadow-sm p-8 text-center max-w-2xl mx-auto border-t-4 border-utgz-accent fade-in-up delay-200">
         
         @if(session('success'))
             <div class="mb-4 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded relative text-sm" role="alert">
@@ -45,65 +106,105 @@
                 </ul>
             </div>
         @endif
-
-        <div class="w-20 h-20 mx-auto bg-blue-50 rounded-full flex items-center justify-center text-utgz-accent mb-4">
-            <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
-        </div>
-        <h3 class="text-2xl font-bold text-utgz-primary mb-2">Etapa {{ $alumno->etapa_id ?? '1' }}</h3>
         
         @if($tienePendiente)
-            <div class="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-                <p class="text-yellow-700 font-medium">Tienes un documento en revisión.</p>
-                <p class="text-yellow-600 text-sm mt-1">Por favor espera a que tu asesor califique tu envío actual antes de subir otro archivo.</p>
+            <div class="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg text-left">
+                <div class="flex items-start">
+                    <svg class="h-6 w-6 text-yellow-600 mr-3 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <div>
+                        <p class="text-yellow-800 font-bold">Documento en revisión</p>
+                        <p class="text-yellow-700 mt-1 text-sm">Por favor espera a que tu asesor académico califique tu envío actual. Recibirás una notificación cuando esto suceda.</p>
+                    </div>
+                </div>
             </div>
         @else
-            <p class="text-gray-500 mb-6">Sube tu documento correspondiente a la etapa actual en formato PDF para que tu asesor pueda revisarlo y aprobarlo.</p>
+            <div class="text-left mb-6">
+                <h3 class="text-lg font-bold text-utgz-primary">Subir Documento</h3>
+                <p class="text-gray-500 text-sm mt-1">Sube tu formato correspondiente a la etapa actual en formato PDF.</p>
+            </div>
             
-            <form x-data="{ uploading: false }" x-on:submit="uploading = true" action="{{ route('alumno.documentos.store') }}" method="POST" enctype="multipart/form-data" class="flex flex-col items-center gap-4">
+            <form x-data="{ uploading: false }" x-on:submit="uploading = true" action="{{ route('alumno.documentos.store') }}" method="POST" enctype="multipart/form-data" class="flex flex-col gap-5 text-left">
                 @csrf
                 
-                <div class="w-full max-w-sm">
-                    <label class="block mb-2 text-sm font-medium text-gray-900" for="documento">Seleccionar PDF (Máx 5MB)</label>
-                    <input class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none file:mr-4 file:py-2 file:px-4 file:rounded-l-lg file:border-0 file:text-sm file:font-semibold file:bg-utgz-bg file:text-utgz-primary hover:file:bg-gray-200 transition-colors" aria-describedby="documento_help" id="documento" name="documento" type="file" accept=".pdf" required>
+                @if($alumno->etapa->codigo === 'FOR-06-12')
+                    <!-- Datos del Asesor Organizacional -->
+                    <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 space-y-4 mb-2">
+                        <h4 class="font-semibold text-gray-700 text-sm uppercase tracking-wide">Datos de la Empresa y Asesor Organizacional</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1" for="company_empresa">Empresa <span class="text-red-500">*</span></label>
+                                <input type="text" id="company_empresa" name="company_empresa" value="{{ old('company_empresa', $alumno->companyAdvisor->empresa ?? '') }}" required class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-utgz-accent focus:border-utgz-accent sm:text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1" for="company_nombre">Nombre del Asesor <span class="text-red-500">*</span></label>
+                                <input type="text" id="company_nombre" name="company_nombre" value="{{ old('company_nombre', $alumno->companyAdvisor->nombre ?? '') }}" required class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-utgz-accent focus:border-utgz-accent sm:text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1" for="company_puesto">Puesto del Asesor <span class="text-red-500">*</span></label>
+                                <input type="text" id="company_puesto" name="company_puesto" value="{{ old('company_puesto', $alumno->companyAdvisor->puesto ?? '') }}" required class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-utgz-accent focus:border-utgz-accent sm:text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1" for="company_telefono">Teléfono (Opcional)</label>
+                                <input type="text" id="company_telefono" name="company_telefono" value="{{ old('company_telefono', $alumno->companyAdvisor->telefono ?? '') }}" class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-utgz-accent focus:border-utgz-accent sm:text-sm">
+                            </div>
+                        </div>
+                    </div>
+                @endif
+                
+                <div>
+                    <label class="block mb-2 text-sm font-medium text-gray-900" for="documento">Seleccionar PDF (Máx 5MB) <span class="text-red-500">*</span></label>
+                    <input class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none file:mr-4 file:py-2 file:px-4 file:border-0 file:text-sm file:font-semibold file:bg-utgz-primary file:text-white hover:file:bg-utgz-primary/90 transition-colors" id="documento" name="documento" type="file" accept=".pdf" required>
                 </div>
 
-                <button type="submit" x-bind:disabled="uploading" class="bg-utgz-accent hover:bg-utgz-primary disabled:opacity-50 text-white font-medium py-2.5 px-6 rounded-md transition-colors shadow-sm flex items-center justify-center min-w-[200px]">
-                    <span x-show="!uploading">Subir Documento</span>
-                    <span x-show="uploading" class="flex items-center gap-2" style="display: none;">
-                        <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                        Subiendo...
-                    </span>
-                </button>
+                <div class="flex justify-end mt-2">
+                    <button type="submit" x-bind:disabled="uploading" class="bg-utgz-accent hover:bg-utgz-primary hover:-translate-y-1 hover:shadow-md transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium py-2 px-6 rounded-md shadow-sm flex items-center justify-center">
+                        <span x-show="!uploading">Enviar Documento</span>
+                        <span x-show="uploading" class="flex items-center gap-2" style="display: none;">
+                            <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                            Enviando...
+                        </span>
+                    </button>
+                </div>
             </form>
         @endif
 
         @if(count($documentos) > 0)
         <div class="mt-8 text-left border-t border-gray-100 pt-6">
-            <h4 class="font-semibold text-gray-700 mb-3">Historial de esta etapa:</h4>
-            <ul class="space-y-3 text-sm">
+            <h4 class="font-semibold text-gray-700 mb-3 flex items-center gap-2">
+                <svg class="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                Historial de entregas
+            </h4>
+            <ul class="space-y-4 text-sm">
                 @foreach($documentos as $doc)
-                <li class="flex items-center justify-between p-3 bg-gray-50 rounded-md border border-gray-100">
-                    <div class="flex items-center gap-3">
-                        <svg class="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"></path></svg>
-                        <span class="font-medium text-gray-700">{{ $doc->created_at->format('d/m/Y H:i') }}</span>
+                <li class="p-4 bg-gray-50 rounded-lg border border-gray-100 transition-all duration-200 hover:shadow-sm">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center gap-2">
+                            <span class="font-medium text-gray-800">{{ $doc->created_at->format('d/m/Y H:i') }}</span>
+                            <span class="text-xs text-gray-500">({{ $doc->created_at->diffForHumans() }})</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-{{ $doc->estado->color() }}-100 text-{{ $doc->estado->color() }}-800">
+                                {{ $doc->estado->label() }}
+                            </span>
+                            
+                            @if($doc->estado === \App\Enums\DocumentoEstado::Pendiente)
+                            <form action="{{ route('alumno.documentos.destroy', $doc->id) }}" method="POST" class="inline" onsubmit="return confirm('¿Estás seguro de cancelar y eliminar este documento?');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="text-red-500 hover:text-red-700 text-xs font-medium underline opacity-80 hover:opacity-100">Eliminar</button>
+                            </form>
+                            @endif
+                        </div>
                     </div>
-                    <div class="flex items-center gap-3">
-                        <span class="px-2 py-1 text-xs font-semibold rounded-full bg-{{ $doc->estado->color() }}-100 text-{{ $doc->estado->color() }}-800">
-                            {{ $doc->estado->label() }}
-                        </span>
-                        
-                        @if($doc->estado === \App\Enums\DocumentoEstado::Pendiente)
-                        <form action="{{ route('alumno.documentos.destroy', $doc->id) }}" method="POST" class="inline" onsubmit="return confirm('¿Estás seguro de cancelar y eliminar este documento?');">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="text-red-500 hover:text-red-700 text-xs font-medium ml-2 underline">Eliminar</button>
-                        </form>
-                        @endif
+                    @if($doc->retroalimentacion)
+                    <div class="mt-3 p-3 bg-white border border-gray-100 rounded text-gray-600 italic text-xs">
+                        <span class="font-semibold block text-gray-700 mb-1">Retroalimentación del asesor:</span>
+                        "{{ $doc->retroalimentacion }}"
                     </div>
+                    @endif
                 </li>
-                @if($doc->retroalimentacion)
-                <p class="text-xs text-gray-500 mt-1 italic pl-11">"{{ $doc->retroalimentacion }}"</p>
-                @endif
                 @endforeach
             </ul>
         </div>

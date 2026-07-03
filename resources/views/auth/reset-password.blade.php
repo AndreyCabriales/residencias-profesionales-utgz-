@@ -4,18 +4,24 @@
         <p class="text-base text-gray-500 mt-2 font-light">Crea una nueva contraseña segura para tu cuenta.</p>
     </div>
 
+    @if ($errors->any())
+        <div class="mb-6 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative text-sm">
+            <ul class="list-disc list-inside">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
     <form method="POST" action="{{ route('password.store') }}" class="space-y-6">
         @csrf
 
         <!-- Password Reset Token -->
         <input type="hidden" name="token" value="{{ $request->route('token') }}">
 
-        <!-- Email Address -->
-        <div>
-            <label for="email" class="block text-sm font-semibold text-gray-700 mb-1">Correo Institucional</label>
-            <input id="email" class="block w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-utgz-accent focus:border-transparent transition-all duration-200" type="email" name="email" :value="old('email', $request->email)" required autofocus autocomplete="username" readonly>
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
-        </div>
+        <!-- Email Address (Hidden) -->
+        <input type="hidden" name="email" value="{{ old('email', $request->email) }}">
 
         <!-- Password -->
         <div>

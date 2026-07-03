@@ -5,31 +5,35 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Repositories\Contracts\AlumnoRepositoryInterface;
 use App\Repositories\Contracts\DocumentoRepositoryInterface;
+use App\Repositories\Contracts\NotificacionRepositoryInterface;
 use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
     public function __construct(
         protected AlumnoRepositoryInterface $alumnoRepository,
-        protected DocumentoRepositoryInterface $documentoRepository
+        protected DocumentoRepositoryInterface $documentoRepository,
+        protected NotificacionRepositoryInterface $notificacionRepository
     ) {}
 
     public function coordinador()
     {
         $totalAlumnos = \App\Models\Alumno::count();
         $totalAsesores = \App\Models\Asesor::count();
+        
         $documentosPendientes = \App\Models\Documento::where('estado', \App\Enums\DocumentoEstado::Pendiente)->count();
+        $documentosAprobados = \App\Models\Documento::where('estado', \App\Enums\DocumentoEstado::Aprobado)->count();
+        $documentosRechazados = \App\Models\Documento::where('estado', \App\Enums\DocumentoEstado::Rechazado)->count();
 
-        $ultimosAlumnos = \App\Models\Alumno::with(['user', 'etapa', 'asignacion.asesor.user'])
-            ->latest()
-            ->take(5)
-            ->get();
+        $actividadReciente = $this->notificacionRepository->getRecentActivity(5);
 
         return view('coordinador.dashboard', compact(
             'totalAlumnos',
             'totalAsesores',
             'documentosPendientes',
-            'ultimosAlumnos'
+            'documentosAprobados',
+            'documentosRechazados',
+            'actividadReciente'
         ));
     }
 
@@ -47,7 +51,9 @@ class DashboardController extends Controller
 
     public function alumno()
     {
-        $alumno = $this->alumnoRepository->findByUserId(Auth::id());
+        $alumno = \App\Models\Alumno::with(['etapa', 'asignacion.asesor.user', 'companyAdvisor'])
+                    ->where('user_id', Auth::id())
+                    ->first();
         
         $documentos = [];
         $tienePendiente = false;

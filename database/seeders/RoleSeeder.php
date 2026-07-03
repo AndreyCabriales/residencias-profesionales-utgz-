@@ -20,32 +20,47 @@ class RoleSeeder extends Seeder {
         ]);
         $coordinador->assignRole($coordinadorRole);
 
-        // Asesores
-        for ($i = 1; $i <= 2; $i++) {
+        // Asesores (por carrera)
+        $asesoresData = [
+            ['name' => 'Ing. Carlos López', 'email' => 'clopez@utgz.mx', 'depto' => 'TIC'],
+            ['name' => 'Ing. Roberto Martínez', 'email' => 'rmartinez@utgz.mx', 'depto' => 'Industrial'],
+            ['name' => 'Ing. María Elena', 'email' => 'melena@utgz.mx', 'depto' => 'Mecatrónica'],
+            ['name' => 'Lic. Patricia Solís', 'email' => 'psolis@utgz.mx', 'depto' => 'Administración'],
+        ];
+
+        foreach ($asesoresData as $data) {
             $user = User::create([
-                'name' => "Asesor $i",
-                'email' => "asesor$i@utgz.mx",
+                'name' => $data['name'],
+                'email' => $data['email'],
                 'password' => bcrypt('password')
             ]);
             $user->assignRole($asesorRole);
             Asesor::create([
                 'user_id' => $user->id,
-                'departamento' => 'Sistemas'
+                'departamento' => $data['depto']
             ]);
         }
 
-        // Alumnos
-        for ($i = 1; $i <= 3; $i++) {
+        // Alumnos (datos reales)
+        $alumnosData = [
+            ['name' => 'Josué Pérez Tapia', 'email' => '23610062@utgz.edu.mx', 'carrera' => 'TSU en Tecnologías de la Información', 'cuatrimestre' => 'Sexto'],
+            ['name' => 'Ana Sofía Garza', 'email' => '23610015@utgz.edu.mx', 'carrera' => 'Ingeniería Industrial', 'cuatrimestre' => 'Noveno'],
+            ['name' => 'Luis Fernández', 'email' => '23610088@utgz.edu.mx', 'carrera' => 'TSU en Mecatrónica', 'cuatrimestre' => 'Sexto'],
+        ];
+
+        foreach ($alumnosData as $data) {
             $user = User::create([
-                'name' => "Alumno $i",
-                'email' => "alumno$i@utgz.mx",
+                'name' => $data['name'],
+                'email' => $data['email'],
                 'password' => bcrypt('password')
             ]);
             $user->assignRole($alumnoRole);
             Alumno::create([
                 'user_id' => $user->id,
-                'matricula' => 'UTGZ' . rand(1000, 9999),
-                'etapa_id' => 1 // Primera etapa por defecto
+                'matricula' => explode('@', $data['email'])[0],
+                'carrera' => $data['carrera'],
+                'cuatrimestre' => $data['cuatrimestre'],
+                'etapa_id' => 1 // FOR-06-12 por defecto
             ]);
         }
     }
