@@ -13,7 +13,7 @@
             </div>
             <div class="ml-4">
                 <h3 class="text-gray-500 text-sm font-medium">Mis Alumnos Asignados</h3>
-                <p class="text-2xl font-bold text-utgz-primary">0</p>
+                <p class="text-2xl font-bold text-utgz-primary">{{ $totalAlumnosAsignados ?? 0 }}</p>
             </div>
         </div>
 
@@ -23,7 +23,7 @@
             </div>
             <div class="ml-4">
                 <h3 class="text-gray-500 text-sm font-medium">Documentos por Revisar</h3>
-                <p class="text-2xl font-bold text-utgz-primary">0</p>
+                <p class="text-2xl font-bold text-utgz-primary">{{ $totalDocumentosPorRevisar ?? 0 }}</p>
             </div>
         </div>
     </div>

@@ -46,11 +46,16 @@ class DashboardController extends Controller
         $asesorId = Auth::user()->asesor->id ?? null;
         
         $documentosPendientes = [];
+        $totalAlumnosAsignados = 0;
+        $totalDocumentosPorRevisar = 0;
+
         if ($asesorId) {
             $documentosPendientes = $this->documentoRepository->getPendientesPorAsesor($asesorId);
+            $totalDocumentosPorRevisar = count($documentosPendientes);
+            $totalAlumnosAsignados = \App\Models\Asignacion::where('asesor_id', $asesorId)->count();
         }
 
-        return view('asesor.dashboard', compact('documentosPendientes'));
+        return view('asesor.dashboard', compact('documentosPendientes', 'totalAlumnosAsignados', 'totalDocumentosPorRevisar'));
     }
 
     public function alumno()
