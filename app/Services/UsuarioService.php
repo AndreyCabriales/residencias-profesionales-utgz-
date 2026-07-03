@@ -49,6 +49,46 @@ class UsuarioService
     }
 
     /**
+     * Actualiza un alumno y su asignación de asesor.
+     */
+    public function actualizarAlumno(Alumno $alumno, array $data): Alumno
+    {
+        return DB::transaction(function () use ($alumno, $data) {
+            // 1. Actualizar el User
+            $alumno->user->update([
+                'name' => $data['name'],
+                'email' => $data['email'],
+            ]);
+
+            // 2. Actualizar el Alumno
+            $alumno->update([
+                'matricula' => $data['matricula'],
+                'carrera' => $data['carrera'] ?? null,
+                'cuatrimestre' => $data['cuatrimestre'] ?? null,
+            ]);
+
+            // 3. Actualizar o crear la asignación
+            if (array_key_exists('asesor_id', $data)) {
+                if (empty($data['asesor_id'])) {
+                    // Si viene vacío (Sin asignar), actualizamos a null para que quede en espera.
+                    // Usamos updateOrCreate en caso de que no tuviera asignacion antes.
+                    \App\Models\Asignacion::updateOrCreate(
+                        ['alumno_id' => $alumno->id],
+                        ['asesor_id' => null]
+                    );
+                } else {
+                    \App\Models\Asignacion::updateOrCreate(
+                        ['alumno_id' => $alumno->id],
+                        ['asesor_id' => $data['asesor_id']]
+                    );
+                }
+            }
+
+            return $alumno;
+        });
+    }
+
+    /**
      * Crea un usuario con rol 'asesor' y su registro en la tabla asesores.
      */
     public function crearAsesor(array $data): Asesor

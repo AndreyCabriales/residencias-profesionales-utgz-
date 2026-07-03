@@ -34,6 +34,7 @@
                         <th class="px-6 py-3 font-medium">Correo Electrónico</th>
                         <th class="px-6 py-3 font-medium">Etapa Actual</th>
                         <th class="px-6 py-3 font-medium">Asesor Asignado</th>
+                        <th class="px-6 py-3 font-medium text-right">Acciones</th>
                     </tr>
                 </thead>
                 <tbody class="text-sm divide-y divide-gray-100">
@@ -49,7 +50,20 @@
                             </span>
                         </td>
                         <td class="px-6 py-4 text-gray-600">
-                            {{ $alumno->asignacion->asesor->user->name ?? 'Sin Asignar' }}
+                            @if($alumno->asignacion && $alumno->asignacion->asesor)
+                                {{ $alumno->asignacion->asesor->user->name }}
+                            @else
+                                <span class="px-2 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-800">
+                                    En espera
+                                </span>
+                            @endif
+                        </td>
+                        <td class="px-6 py-4 text-right">
+                            <a href="{{ route('coordinador.alumnos.edit', $alumno) }}" class="inline-flex items-center justify-center p-2 text-gray-500 hover:text-utgz-primary hover:bg-blue-50 rounded-lg transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                    <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                                </svg>
+                            </a>
                         </td>
                     </tr>
                     @endforeach

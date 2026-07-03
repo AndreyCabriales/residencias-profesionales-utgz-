@@ -38,7 +38,8 @@ Route::middleware(['auth', 'role:coordinador'])->group(function () {
     Route::get('/coordinador/alumnos', [CoordinadorAlumnoController::class, 'index'])->name('coordinador.alumnos.index');
     Route::get('/coordinador/alumnos/crear', [CoordinadorAlumnoController::class, 'create'])->name('coordinador.alumnos.create');
     Route::post('/coordinador/alumnos', [CoordinadorAlumnoController::class, 'store'])->name('coordinador.alumnos.store');
-
+    Route::get('/coordinador/alumnos/{alumno}/editar', [CoordinadorAlumnoController::class, 'edit'])->name('coordinador.alumnos.edit');
+    Route::put('/coordinador/alumnos/{alumno}', [CoordinadorAlumnoController::class, 'update'])->name('coordinador.alumnos.update');
     // Rutas para la gestión de asesores
     Route::get('/coordinador/asesores', [CoordinadorAsesorController::class, 'index'])->name('coordinador.asesores.index');
     Route::get('/coordinador/asesores/crear', [CoordinadorAsesorController::class, 'create'])->name('coordinador.asesores.create');

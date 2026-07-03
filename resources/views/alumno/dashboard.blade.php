@@ -107,6 +107,20 @@
             </div>
         @endif
         
+        @if(!$alumno->asignacion || !$alumno->asignacion->asesor_id)
+            <div class="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-lg text-left">
+                <div class="flex items-start">
+                    <svg class="h-6 w-6 text-amber-600 mr-3 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <div>
+                        <p class="text-amber-800 font-bold">Asesor en proceso de asignación</p>
+                        <p class="text-amber-700 mt-1 text-sm">Tu asesor académico está siendo asignado por el Coordinador. Mientras tanto puedes continuar subiendo y gestionando tus documentos con normalidad. Una vez asignado el nuevo asesor, tus documentos aparecerán automáticamente para su revisión.</p>
+                    </div>
+                </div>
+            </div>
+        @endif
+
         @if($tienePendiente)
             <div class="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg text-left">
                 <div class="flex items-start">
