@@ -59,24 +59,8 @@ class DocumentoPolicy
         ], true);
     }
 
-    /**
-     * Determina si el usuario puede eliminar el documento.
-     */
-    public function delete(User $user, Documento $documento): bool
-    {
-        // Solo aplica a Alumnos
-        if (!$user->hasRole('alumno') || !$user->alumno) {
-            return false;
-        }
-
-        // Debe pertenecerle al alumno
-        if ($user->alumno->id !== $documento->alumno_id) {
-            return false;
-        }
-
-        // Solo se puede eliminar si está Pendiente
-        return $documento->estado === DocumentoEstado::Pendiente;
-    }
+    // El método delete ha sido removido porque los documentos ya no pueden
+    // ser eliminados por el alumno en este flujo de negocio.
 
     /**
      * Determina si el usuario puede evaluar (revisar) el documento.

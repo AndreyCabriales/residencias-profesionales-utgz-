@@ -241,13 +241,7 @@
                                 {{ $doc->estado->label() }}
                             </span>
                             
-                            @if($doc->estado === \App\Enums\DocumentoEstado::Pendiente)
-                            <form action="{{ route('alumno.documentos.destroy', $doc->id) }}" method="POST" class="inline" onsubmit="return confirm('¿Estás seguro de cancelar y eliminar este documento?');">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="text-red-500 hover:text-red-700 text-xs font-medium underline opacity-80 hover:opacity-100">Eliminar</button>
-                            </form>
-                            @endif
+                            <!-- El botón de cancelar ha sido eliminado del nuevo flujo -->
                         </div>
                     </div>
                     @if($doc->retroalimentacion)

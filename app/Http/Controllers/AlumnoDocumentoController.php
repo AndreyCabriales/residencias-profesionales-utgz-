@@ -72,26 +72,6 @@ class AlumnoDocumentoController extends Controller
         }
     }
 
-    /**
-     * Elimina un documento si aún está en estado Pendiente.
-     */
-    public function destroy(\App\Models\Documento $documento): RedirectResponse
-    {
-        // Política para verificar que el documento pertenece al alumno y está pendiente
-        \Illuminate\Support\Facades\Gate::authorize('delete', $documento);
-
-        try {
-            // Eliminar archivo físico
-            if (\Illuminate\Support\Facades\Storage::disk('local')->exists($documento->archivo)) {
-                \Illuminate\Support\Facades\Storage::disk('local')->delete($documento->archivo);
-            }
-            
-            // Eliminar registro
-            $documento->delete();
-
-            return back()->with('success', 'El documento fue cancelado y eliminado correctamente.');
-        } catch (\Exception $e) {
-            return back()->with('error', 'Ocurrió un error al intentar eliminar: ' . $e->getMessage());
-        }
-    }
+    // El método destroy ha sido eliminado ya que en el nuevo flujo los documentos
+    // nacen directamente en estado EnRevision y no pueden ser eliminados por el alumno.
 }
