@@ -17,22 +17,23 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\AlumnoDocumentoController;
+use App\Http\Controllers\AsesorDocumentoController;
+
 Route::middleware(['auth', 'role:coordinador'])->group(function () {
-    Route::get('/coordinador/dashboard', function () {
-        return view('coordinador.dashboard');
-    })->name('coordinador.dashboard');
+    Route::get('/coordinador/dashboard', [DashboardController::class, 'coordinador'])->name('coordinador.dashboard');
 });
 
 Route::middleware(['auth', 'role:asesor'])->group(function () {
-    Route::get('/asesor/dashboard', function () {
-        return view('asesor.dashboard');
-    })->name('asesor.dashboard');
+    Route::get('/asesor/dashboard', [DashboardController::class, 'asesor'])->name('asesor.dashboard');
+    Route::get('/asesor/documentos/{id}/descargar', [AsesorDocumentoController::class, 'descargar'])->name('asesor.documentos.descargar');
+    Route::post('/asesor/documentos/{id}/revisar', [AsesorDocumentoController::class, 'revisar'])->name('asesor.documentos.revisar');
 });
 
 Route::middleware(['auth', 'role:alumno'])->group(function () {
-    Route::get('/alumno/dashboard', function () {
-        return view('alumno.dashboard');
-    })->name('alumno.dashboard');
+    Route::get('/alumno/dashboard', [DashboardController::class, 'alumno'])->name('alumno.dashboard');
+    Route::post('/alumno/documentos', [AlumnoDocumentoController::class, 'store'])->name('alumno.documentos.store');
 });
 
 require __DIR__.'/auth.php';
