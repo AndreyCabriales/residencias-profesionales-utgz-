@@ -2,51 +2,107 @@
 
 namespace App\Policies;
 
+use App\Enums\DocumentoEstado;
+use App\Models\Asignacion;
 use App\Models\Documento;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class DocumentoPolicy
 {
     /**
-     * Determine whether the user can view the model.
+     * Determina si el usuario puede visualizar el documento.
      */
     public function view(User $user, Documento $documento): bool
     {
-        // Si el usuario es el alumno dueño del documento, puede verlo
-        if ($user->hasRole('alumno') && $user->alumno && $user->alumno->id === $documento->alumno_id) {
-            return true;
-        }
-
-        // Si el usuario es el asesor asignado al alumno, puede verlo
-        if ($user->hasRole('asesor') && $user->asesor) {
-            $asignacion = $documento->alumno->asignacion;
-            if ($asignacion && $asignacion->asesor_id === $user->asesor->id) {
-                return true;
-            }
-        }
-
-        // Si el usuario es coordinador, puede verlo todo
+        // El Coordinador tiene acceso completo de lectura
         if ($user->hasRole('coordinador')) {
             return true;
+        }
+
+        // El Alumno solo puede visualizar sus propios documentos
+        if ($user->hasRole('alumno')) {
+            return $user->alumno && $user->alumno->id === $documento->alumno_id;
+        }
+
+        // El Asesor solo puede visualizar documentos de sus alumnos asignados
+        if ($user->hasRole('asesor')) {
+            if (!$user->asesor) {
+                return false;
+            }
+            return Asignacion::where('asesor_id', $user->asesor->id)
+                ->where('alumno_id', $documento->alumno_id)
+                ->exists();
         }
 
         return false;
     }
 
     /**
-     * Determine whether the user can review the model (approve/reject).
+     * Determina si el usuario puede actualizar el documento.
      */
-    public function review(User $user, Documento $documento): bool
+    public function update(User $user, Documento $documento): bool
     {
-        // Solo el asesor asignado puede revisar el documento
-        if ($user->hasRole('asesor') && $user->asesor) {
-            $asignacion = $documento->alumno->asignacion;
-            if ($asignacion && $asignacion->asesor_id === $user->asesor->id) {
-                return true;
-            }
+        // Solo aplica a Alumnos
+        if (!$user->hasRole('alumno') || !$user->alumno) {
+            return false;
         }
 
-        return false;
+        // Debe pertenecerle al alumno
+        if ($user->alumno->id !== $documento->alumno_id) {
+            return false;
+        }
+
+        // Solo se puede editar si está Pendiente o Rechazado (No En Revisión ni Aprobado)
+        return in_array($documento->estado, [
+            DocumentoEstado::Pendiente,
+            DocumentoEstado::Rechazado
+        ], true);
+    }
+
+    /**
+     * Determina si el usuario puede eliminar el documento.
+     */
+    public function delete(User $user, Documento $documento): bool
+    {
+        // Solo aplica a Alumnos
+        if (!$user->hasRole('alumno') || !$user->alumno) {
+            return false;
+        }
+
+        // Debe pertenecerle al alumno
+        if ($user->alumno->id !== $documento->alumno_id) {
+            return false;
+        }
+
+        // Solo se puede eliminar si está Pendiente
+        return $documento->estado === DocumentoEstado::Pendiente;
+    }
+
+    /**
+     * Determina si el usuario puede evaluar (revisar) el documento.
+     */
+    public function evaluate(User $user, Documento $documento): bool
+    {
+        // El coordinador NO participa en evaluaciones académicas
+        if ($user->hasRole('coordinador')) {
+            return false;
+        }
+
+        // Solo aplica a Asesores
+        if (!$user->hasRole('asesor') || !$user->asesor) {
+            return false;
+        }
+
+        // El alumno debe estarle asignado
+        $esSuAlumno = Asignacion::where('asesor_id', $user->asesor->id)
+            ->where('alumno_id', $documento->alumno_id)
+            ->exists();
+
+        if (!$esSuAlumno) {
+            return false;
+        }
+
+        // El documento debe estar En Revisión
+        return $documento->estado === DocumentoEstado::EnRevision;
     }
 }

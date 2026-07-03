@@ -17,19 +17,10 @@ class AsesorDocumentoController extends Controller
         protected DocumentoRepositoryInterface $documentoRepository
     ) {}
 
-    public function descargar(int $id)
+    public function descargar(Documento $documento)
     {
-        $documento = $this->documentoRepository->findById($id);
-
-        if (!$documento) {
-            return redirect()->route('asesor.dashboard')->with('error', 'Documento no encontrado.');
-        }
-        
         // Política de seguridad para prevenir IDOR
-        if (!Gate::allows('view', $documento)) {
-            return redirect()->route('asesor.dashboard')
-                ->with('error', 'Acceso denegado: Este documento no pertenece a uno de tus alumnos asignados.');
-        }
+        Gate::authorize('view', $documento);
 
         // Verificar que el archivo exista en storage/app/documentos (disco local)
         if (!Storage::disk('local')->exists($documento->archivo)) {
@@ -40,24 +31,15 @@ class AsesorDocumentoController extends Controller
         return Storage::disk('local')->download($documento->archivo);
     }
 
-    public function revisar(Request $request, int $id): RedirectResponse
+    public function revisar(Request $request, Documento $documento): RedirectResponse
     {
         $request->validate([
             'accion' => 'required|in:aprobar,rechazar',
             'retroalimentacion' => 'nullable|string|max:1000'
         ]);
 
-        $documento = $this->documentoRepository->findById($id);
-        
-        if (!$documento) {
-            return back()->with('error', 'Documento no encontrado.');
-        }
-
-        // Política de seguridad para prevenir modificación de otros documentos
-        if (!Gate::allows('review', $documento)) {
-            return redirect()->route('asesor.dashboard')
-                ->with('error', 'Acceso denegado: No tienes permisos para revisar este documento.');
-        }
+        // Política de seguridad para prevenir evaluación no autorizada
+        Gate::authorize('evaluate', $documento);
 
         $nuevoEstado = $request->accion === 'aprobar' 
             ? DocumentoEstado::Aprobado 

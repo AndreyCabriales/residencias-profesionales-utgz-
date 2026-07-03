@@ -75,24 +75,15 @@ class AlumnoDocumentoController extends Controller
     /**
      * Elimina un documento si aún está en estado Pendiente.
      */
-    public function destroy(int $id): RedirectResponse
+    public function destroy(\App\Models\Documento $documento): RedirectResponse
     {
-        $documento = \App\Models\Documento::findOrFail($id);
-        
-        // Política para verificar que el documento es de este alumno
-        if (Auth::user()->alumno->id !== $documento->alumno_id) {
-            return back()->with('error', 'No tienes permiso para eliminar este documento.');
-        }
-
-        // Solo se pueden eliminar documentos pendientes
-        if ($documento->estado !== \App\Enums\DocumentoEstado::Pendiente) {
-            return back()->with('error', 'No puedes eliminar un documento que ya fue revisado.');
-        }
+        // Política para verificar que el documento pertenece al alumno y está pendiente
+        \Illuminate\Support\Facades\Gate::authorize('delete', $documento);
 
         try {
             // Eliminar archivo físico
-            if (\Illuminate\Support\Facades\Storage::disk('local')->exists($documento->archivo_path)) {
-                \Illuminate\Support\Facades\Storage::disk('local')->delete($documento->archivo_path);
+            if (\Illuminate\Support\Facades\Storage::disk('local')->exists($documento->archivo)) {
+                \Illuminate\Support\Facades\Storage::disk('local')->delete($documento->archivo);
             }
             
             // Eliminar registro
