@@ -7,7 +7,7 @@
         <p class="text-base text-gray-500 mt-2 font-light">Ingresa tus credenciales para acceder a tu panel.</p>
     </div>
 
-    <form method="POST" action="{{ route('login') }}" class="space-y-6">
+    <form method="POST" action="{{ route('login') }}" class="space-y-6" novalidate>
         @csrf
 
         <!-- Email Address -->
