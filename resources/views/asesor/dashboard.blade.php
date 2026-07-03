@@ -79,22 +79,22 @@
                                 </a>
                                 
                                 <!-- Formulario Aprobar -->
-                                <form action="{{ route('asesor.documentos.revisar', $doc->id) }}" method="POST" class="inline">
+                                <form action="{{ route('asesor.documentos.revisar', $doc->id) }}" method="POST" class="inline confirm-action" data-confirm-title="¿Aprobar documento?" data-confirm-text="El documento será aprobado y el alumno avanzará a la siguiente etapa." data-confirm-button-text="Sí, aprobar" data-confirm-button-color="#10B981" data-confirm-icon="success">
                                     @csrf
                                     <input type="hidden" name="accion" value="aprobar">
-                                    <button type="submit" onclick="return confirm('¿Estás seguro de APROBAR este documento? El alumno avanzará de etapa.')" class="px-3 py-1.5 bg-green-50 text-green-600 hover:bg-green-100 rounded-md font-medium transition-colors text-xs inline-flex items-center">
+                                    <button type="submit" class="px-3 py-1.5 bg-green-50 text-green-600 hover:bg-green-100 rounded-md font-medium transition-colors text-xs inline-flex items-center">
                                         <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                                         Aprobar
                                     </button>
                                 </form>
 
-                                <!-- Botón Rechazar (Abre modal en una app real, aquí enviaremos directo por simplicidad) -->
-                                <form action="{{ route('asesor.documentos.revisar', $doc->id) }}" method="POST" class="inline">
+                                <!-- Botón Rechazar (Abre modal SweetAlert2) -->
+                                <form action="{{ route('asesor.documentos.revisar', $doc->id) }}" method="POST" class="inline reject-action">
                                     @csrf
                                     <input type="hidden" name="accion" value="rechazar">
-                                    <!-- Retroalimentación simplificada vía prompt -->
-                                    <input type="hidden" name="retroalimentacion" id="retro_{{ $doc->id }}" value="">
-                                    <button type="button" onclick="const motivo = prompt('Motivo de rechazo:'); if(motivo){ document.getElementById('retro_{{ $doc->id }}').value = motivo; this.form.submit(); }" class="px-3 py-1.5 bg-red-50 text-red-600 hover:bg-red-100 rounded-md font-medium transition-colors text-xs inline-flex items-center">
+                                    <!-- Retroalimentación llenada por SweetAlert2 -->
+                                    <input type="hidden" name="retroalimentacion" value="">
+                                    <button type="submit" class="px-3 py-1.5 bg-red-50 text-red-600 hover:bg-red-100 rounded-md font-medium transition-colors text-xs inline-flex items-center">
                                         <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                                         Rechazar
                                     </button>

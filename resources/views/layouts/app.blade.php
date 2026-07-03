@@ -93,7 +93,7 @@
             </nav>
 
             <div class="p-4 border-t border-gray-700">
-                <form method="POST" action="{{ route('logout') }}">
+                <form method="POST" action="{{ route('logout') }}" class="confirm-action" data-confirm-title="¿Cerrar sesión?" data-confirm-text="Tendrás que volver a iniciar sesión para acceder al sistema." data-confirm-button-text="Sí, cerrar sesión">
                     @csrf
                     <button type="submit" class="flex items-center w-full px-4 py-2.5 text-sm text-red-400 rounded-md hover:bg-red-500/10 transition-colors">
                         <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
@@ -125,5 +125,90 @@
                 {{ $slot }}
             </div>
         </main>
+        <!-- SweetAlert2 -->
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                // Interceptar formularios o botones con la clase 'confirm-action'
+                const confirmForms = document.querySelectorAll('.confirm-action');
+                
+                confirmForms.forEach(form => {
+                    form.addEventListener('submit', function (e) {
+                        e.preventDefault();
+                        
+                        const title = this.dataset.confirmTitle || '¿Estás seguro?';
+                        const text = this.dataset.confirmText || 'Esta acción no se puede deshacer.';
+                        const icon = this.dataset.confirmIcon || 'warning';
+                        const confirmButtonText = this.dataset.confirmButtonText || 'Sí, confirmar';
+                        const confirmButtonColor = this.dataset.confirmButtonColor || '#d33';
+                        
+                        Swal.fire({
+                            title: title,
+                            text: text,
+                            icon: icon,
+                            showCancelButton: true,
+                            confirmButtonColor: confirmButtonColor,
+                            cancelButtonColor: '#6B7280',
+                            confirmButtonText: confirmButtonText,
+                            cancelButtonText: 'Cancelar',
+                            customClass: {
+                                confirmButton: 'font-bold rounded-lg px-4 py-2',
+                                cancelButton: 'font-bold rounded-lg px-4 py-2'
+                            }
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                this.submit();
+                            }
+                        });
+                    });
+                });
+                // Interceptar formularios o botones con la clase 'reject-action' (con prompt)
+                const rejectForms = document.querySelectorAll('.reject-action');
+                
+                rejectForms.forEach(form => {
+                    form.addEventListener('submit', function (e) {
+                        e.preventDefault();
+                        
+                        const title = this.dataset.confirmTitle || 'Motivo de rechazo';
+                        const text = this.dataset.confirmText || 'Ingresa las correcciones que el alumno debe hacer:';
+                        
+                        Swal.fire({
+                            title: title,
+                            text: text,
+                            input: 'textarea',
+                            inputPlaceholder: 'Escribe el motivo aquí...',
+                            inputAttributes: {
+                                'aria-label': 'Motivo de rechazo',
+                                'required': 'true'
+                            },
+                            showCancelButton: true,
+                            confirmButtonColor: '#d33',
+                            cancelButtonColor: '#6B7280',
+                            confirmButtonText: 'Rechazar documento',
+                            cancelButtonText: 'Cancelar',
+                            customClass: {
+                                confirmButton: 'font-bold rounded-lg px-4 py-2',
+                                cancelButton: 'font-bold rounded-lg px-4 py-2'
+                            },
+                            preConfirm: (value) => {
+                                if (!value) {
+                                    Swal.showValidationMessage('Debes ingresar un motivo de rechazo');
+                                }
+                                return value;
+                            }
+                        }).then((result) => {
+                            if (result.isConfirmed && result.value) {
+                                // Buscar el input oculto de retroalimentación dentro de este form
+                                const retroInput = this.querySelector('input[name="retroalimentacion"]');
+                                if (retroInput) {
+                                    retroInput.value = result.value;
+                                }
+                                this.submit();
+                            }
+                        });
+                    });
+                });
+            });
+        </script>
     </body>
 </html>
