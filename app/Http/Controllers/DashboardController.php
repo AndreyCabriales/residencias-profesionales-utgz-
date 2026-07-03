@@ -23,7 +23,7 @@ class DashboardController extends Controller
         $alumnosEnProceso = \App\Models\Alumno::where('estado_residencia', \App\Enums\ResidenciaEstado::EnProceso)->count();
         $alumnosFinalizados = \App\Models\Alumno::where('estado_residencia', \App\Enums\ResidenciaEstado::Finalizada)->count();
         
-        $documentosPendientes = \App\Models\Documento::where('estado', \App\Enums\DocumentoEstado::Pendiente)->count();
+        $documentosPendientes = \App\Models\Documento::where('estado', \App\Enums\DocumentoEstado::EnRevision)->count();
         $documentosAprobados = \App\Models\Documento::where('estado', \App\Enums\DocumentoEstado::Aprobado)->count();
         $documentosRechazados = \App\Models\Documento::where('estado', \App\Enums\DocumentoEstado::Rechazado)->count();
 
@@ -66,8 +66,8 @@ class DashboardController extends Controller
             // Obtener los documentos de la etapa actual del alumno
             $documentos = $this->documentoRepository->getByAlumnoAndEtapa($alumno->id, $alumno->etapa_id);
             
-            // Verificar si hay alguno pendiente
-            $tienePendiente = collect($documentos)->contains('estado', \App\Enums\DocumentoEstado::Pendiente);
+            // Verificar si hay alguno pendiente (que ahora es EnRevision)
+            $tienePendiente = collect($documentos)->contains('estado', \App\Enums\DocumentoEstado::EnRevision);
         }
 
         return view('alumno.dashboard', compact('alumno', 'documentos', 'tienePendiente'));

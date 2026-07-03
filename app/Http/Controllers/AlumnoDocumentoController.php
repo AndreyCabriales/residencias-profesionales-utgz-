@@ -31,7 +31,7 @@ class AlumnoDocumentoController extends Controller
             // Validación de negocio: Evitar dobles subidas si ya hay uno pendiente
             $tienePendiente = \App\Models\Documento::where('alumno_id', $alumno->id)
                 ->where('etapa_id', $alumno->etapa_id)
-                ->where('estado', \App\Enums\DocumentoEstado::Pendiente)
+                ->where('estado', \App\Enums\DocumentoEstado::EnRevision)
                 ->exists();
 
             if ($tienePendiente) {

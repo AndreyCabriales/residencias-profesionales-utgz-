@@ -49,7 +49,7 @@ class DocumentoRepository implements DocumentoRepositoryInterface
         return Documento::whereHas('alumno.asignacion', function($query) use ($asesorId) {
             $query->where('asesor_id', $asesorId);
         })
-        ->where('estado', DocumentoEstado::Pendiente)
+        ->where('estado', DocumentoEstado::EnRevision)
         ->with(['alumno.user', 'etapa'])
         ->orderBy('created_at', 'asc')
         ->get();

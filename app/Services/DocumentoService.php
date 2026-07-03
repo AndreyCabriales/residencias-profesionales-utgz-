@@ -43,7 +43,7 @@ class DocumentoService
             'alumno_id' => $alumnoId,
             'etapa_id' => $etapaId,
             'archivo' => $rutaRelativa, // En la BD de MySQL la columna se llama 'archivo' o 'ruta_archivo', verificaremos
-            'estado' => DocumentoEstado::Pendiente,
+            'estado' => DocumentoEstado::EnRevision,
         ]);
     }
 }
