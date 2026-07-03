@@ -148,12 +148,17 @@
                             icon: icon,
                             showCancelButton: true,
                             confirmButtonColor: confirmButtonColor,
-                            cancelButtonColor: '#6B7280',
+                            cancelButtonColor: '#374151',
                             confirmButtonText: confirmButtonText,
                             cancelButtonText: 'Cancelar',
+                            background: '#0D1B2A',
+                            color: '#F0F4F8',
+                            width: '26em',
                             customClass: {
-                                confirmButton: 'font-bold rounded-lg px-4 py-2',
-                                cancelButton: 'font-bold rounded-lg px-4 py-2'
+                                popup: 'border border-gray-700 shadow-2xl rounded-xl',
+                                title: 'text-xl font-bold',
+                                confirmButton: 'font-bold rounded-lg px-5 py-2.5 shadow-lg hover:-translate-y-0.5 transition-transform',
+                                cancelButton: 'font-bold rounded-lg px-5 py-2.5 shadow-lg hover:-translate-y-0.5 transition-transform'
                             }
                         }).then((result) => {
                             if (result.isConfirmed) {
@@ -182,13 +187,19 @@
                                 'required': 'true'
                             },
                             showCancelButton: true,
-                            confirmButtonColor: '#d33',
-                            cancelButtonColor: '#6B7280',
+                            confirmButtonColor: '#EF4444',
+                            cancelButtonColor: '#374151',
                             confirmButtonText: 'Rechazar documento',
                             cancelButtonText: 'Cancelar',
+                            background: '#0D1B2A',
+                            color: '#F0F4F8',
+                            width: '26em',
                             customClass: {
-                                confirmButton: 'font-bold rounded-lg px-4 py-2',
-                                cancelButton: 'font-bold rounded-lg px-4 py-2'
+                                popup: 'border border-gray-700 shadow-2xl rounded-xl',
+                                title: 'text-xl font-bold',
+                                input: 'bg-gray-800 text-white border-gray-600 focus:border-red-500 rounded-lg',
+                                confirmButton: 'font-bold rounded-lg px-5 py-2.5 shadow-lg hover:-translate-y-0.5 transition-transform',
+                                cancelButton: 'font-bold rounded-lg px-5 py-2.5 shadow-lg hover:-translate-y-0.5 transition-transform'
                             },
                             preConfirm: (value) => {
                                 if (!value) {
