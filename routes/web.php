@@ -20,6 +20,13 @@ Route::middleware('auth')->group(function () {
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AlumnoDocumentoController;
 use App\Http\Controllers\AsesorDocumentoController;
+use App\Http\Controllers\NotificacionController;
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/notificaciones', [NotificacionController::class, 'index'])->name('notificaciones.index');
+    Route::get('/notificaciones/{id}/leer', [NotificacionController::class, 'leer'])->name('notificaciones.leer');
+    Route::post('/notificaciones/leer-todas', [NotificacionController::class, 'leerTodas'])->name('notificaciones.leer_todas');
+});
 
 use App\Http\Controllers\CoordinadorAlumnoController;
 use App\Http\Controllers\CoordinadorAsesorController;

@@ -14,4 +14,5 @@ class User extends Authenticatable {
     
     public function alumno() { return $this->hasOne(Alumno::class); }
     public function asesor() { return $this->hasOne(Asesor::class); }
+    public function notificaciones() { return $this->hasMany(Notificacion::class); }
 }
