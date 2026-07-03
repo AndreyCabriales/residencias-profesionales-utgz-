@@ -54,6 +54,7 @@ Route::middleware(['auth', 'role:asesor'])->group(function () {
 Route::middleware(['auth', 'role:alumno'])->group(function () {
     Route::get('/alumno/dashboard', [DashboardController::class, 'alumno'])->name('alumno.dashboard');
     Route::post('/alumno/documentos', [AlumnoDocumentoController::class, 'store'])->name('alumno.documentos.store');
+    Route::delete('/alumno/documentos/{id}', [AlumnoDocumentoController::class, 'destroy'])->name('alumno.documentos.destroy');
 });
 
 require __DIR__.'/auth.php';

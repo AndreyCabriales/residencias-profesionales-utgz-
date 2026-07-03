@@ -32,6 +32,8 @@ class CoordinadorAlumnoController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'matricula' => 'required|string|max:20|unique:alumnos',
+            'carrera' => 'nullable|string|max:255',
+            'cuatrimestre' => 'nullable|string|max:50',
             'asesor_id' => 'nullable|exists:asesores,id',
         ]);
 

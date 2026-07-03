@@ -5,7 +5,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Alumno extends Model {
     protected $table = 'alumnos';
-    protected $fillable = ['user_id', 'matricula', 'etapa_id'];
+    protected $fillable = ['user_id', 'matricula', 'etapa_id', 'carrera', 'cuatrimestre'];
     public function user() { return $this->belongsTo(User::class); }
     public function etapa() { return $this->belongsTo(Etapa::class); }
     public function documentos() { return $this->hasMany(Documento::class); }

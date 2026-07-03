@@ -50,11 +50,16 @@ class DashboardController extends Controller
         $alumno = $this->alumnoRepository->findByUserId(Auth::id());
         
         $documentos = [];
+        $tienePendiente = false;
+        
         if ($alumno) {
             // Obtener los documentos de la etapa actual del alumno
             $documentos = $this->documentoRepository->getByAlumnoAndEtapa($alumno->id, $alumno->etapa_id);
+            
+            // Verificar si hay alguno pendiente
+            $tienePendiente = collect($documentos)->contains('estado', \App\Enums\DocumentoEstado::Pendiente);
         }
 
-        return view('alumno.dashboard', compact('alumno', 'documentos'));
+        return view('alumno.dashboard', compact('alumno', 'documentos', 'tienePendiente'));
     }
 }

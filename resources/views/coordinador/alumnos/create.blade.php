@@ -44,6 +44,23 @@
                     <input type="email" name="email" id="email" value="{{ old('email') }}" required placeholder="ejemplo@utgz.mx" class="w-full rounded-md border-gray-300 shadow-sm focus:border-utgz-accent focus:ring focus:ring-utgz-accent focus:ring-opacity-50">
                 </div>
 
+                <!-- Carrera -->
+                <div>
+                    <label for="carrera" class="block text-sm font-medium text-gray-700 mb-1">Carrera</label>
+                    <input type="text" name="carrera" id="carrera" value="{{ old('carrera') }}" placeholder="Ej. TSU en Tecnologías de la Información" class="w-full rounded-md border-gray-300 shadow-sm focus:border-utgz-accent focus:ring focus:ring-utgz-accent focus:ring-opacity-50">
+                </div>
+
+                <!-- Cuatrimestre -->
+                <div>
+                    <label for="cuatrimestre" class="block text-sm font-medium text-gray-700 mb-1">Cuatrimestre</label>
+                    <select name="cuatrimestre" id="cuatrimestre" class="w-full rounded-md border-gray-300 shadow-sm focus:border-utgz-accent focus:ring focus:ring-utgz-accent focus:ring-opacity-50">
+                        <option value="">-- Seleccionar --</option>
+                        @for ($i = 1; $i <= 11; $i++)
+                            <option value="{{ $i }}" {{ old('cuatrimestre') == $i ? 'selected' : '' }}>{{ $i }}° Cuatrimestre</option>
+                        @endfor
+                    </select>
+                </div>
+
                 <!-- Asesor Asignado -->
                 <div class="md:col-span-2">
                     <label for="asesor_id" class="block text-sm font-medium text-gray-700 mb-1">Asignar Asesor (Opcional)</label>

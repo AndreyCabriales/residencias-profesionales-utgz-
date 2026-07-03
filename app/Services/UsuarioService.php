@@ -31,6 +31,8 @@ class UsuarioService
             $alumno = Alumno::create([
                 'user_id' => $user->id,
                 'matricula' => $data['matricula'],
+                'carrera' => $data['carrera'] ?? null,
+                'cuatrimestre' => $data['cuatrimestre'] ?? null,
                 'etapa_id' => 1, // Todos inician en la etapa 1
             ]);
 

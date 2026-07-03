@@ -30,6 +30,7 @@
                     <tr class="bg-gray-50 text-gray-500 text-sm border-b border-gray-200">
                         <th class="px-6 py-3 font-medium">Nombre Completo</th>
                         <th class="px-6 py-3 font-medium">Matrícula</th>
+                        <th class="px-6 py-3 font-medium">Carrera</th>
                         <th class="px-6 py-3 font-medium">Correo Electrónico</th>
                         <th class="px-6 py-3 font-medium">Etapa Actual</th>
                         <th class="px-6 py-3 font-medium">Asesor Asignado</th>
@@ -40,6 +41,7 @@
                     <tr class="hover:bg-gray-50 transition-colors">
                         <td class="px-6 py-4 font-medium text-gray-900">{{ $alumno->user->name }}</td>
                         <td class="px-6 py-4 text-gray-600">{{ $alumno->matricula }}</td>
+                        <td class="px-6 py-4 text-gray-600">{{ $alumno->carrera ?? 'N/A' }}</td>
                         <td class="px-6 py-4 text-gray-600">{{ $alumno->user->email }}</td>
                         <td class="px-6 py-4 text-gray-600">
                             <span class="px-2 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800">
