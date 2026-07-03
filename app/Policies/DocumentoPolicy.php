@@ -102,10 +102,7 @@ class DocumentoPolicy
             return false;
         }
 
-        // El documento debe estar Pendiente o En Revisión
-        return in_array($documento->estado, [
-            DocumentoEstado::Pendiente,
-            DocumentoEstado::EnRevision
-        ], true);
+        // El documento debe estar En Revisión
+        return $documento->estado === DocumentoEstado::EnRevision;
     }
 }
