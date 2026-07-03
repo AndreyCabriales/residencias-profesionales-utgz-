@@ -46,7 +46,7 @@ class DocumentoRepository implements DocumentoRepositoryInterface
 
     public function getPendientesPorAsesor(int $asesorId): Collection
     {
-        return Documento::whereHas('alumno', function($query) use ($asesorId) {
+        return Documento::whereHas('alumno.asignacion', function($query) use ($asesorId) {
             $query->where('asesor_id', $asesorId);
         })
         ->where('estado', DocumentoEstado::Pendiente)

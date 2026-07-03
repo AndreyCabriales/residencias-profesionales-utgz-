@@ -16,9 +16,21 @@ class DashboardController extends Controller
 
     public function coordinador()
     {
-        // En una fase posterior crearemos el AsesorRepository y AlumnoRepository completos para estadísticas
-        // Por ahora cargamos la vista directamente
-        return view('coordinador.dashboard');
+        $totalAlumnos = \App\Models\Alumno::count();
+        $totalAsesores = \App\Models\Asesor::count();
+        $documentosPendientes = \App\Models\Documento::where('estado', \App\Enums\DocumentoEstado::Pendiente)->count();
+
+        $ultimosAlumnos = \App\Models\Alumno::with(['user', 'etapa', 'asignacion.asesor.user'])
+            ->latest()
+            ->take(5)
+            ->get();
+
+        return view('coordinador.dashboard', compact(
+            'totalAlumnos',
+            'totalAsesores',
+            'documentosPendientes',
+            'ultimosAlumnos'
+        ));
     }
 
     public function asesor()
