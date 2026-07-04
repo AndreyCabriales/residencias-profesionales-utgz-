@@ -24,9 +24,14 @@ class DocumentoPolicy
             return $user->alumno && $user->alumno->id === $documento->alumno_id;
         }
 
-        // El Asesor solo puede visualizar documentos de sus alumnos asignados
+        // Servicios Escolares solo visualiza documentos de su competencia
+        if ($user->hasRole('servicios_escolares')) {
+            return $documento->etapa->tipo === 'servicios_escolares';
+        }
+
+        // El Asesor solo puede visualizar documentos académicos de sus alumnos asignados
         if ($user->hasRole('asesor')) {
-            if (!$user->asesor) {
+            if (!$user->asesor || $documento->etapa->tipo !== 'asesor') {
                 return false;
             }
             return Asignacion::where('asesor_id', $user->asesor->id)
@@ -67,26 +72,32 @@ class DocumentoPolicy
      */
     public function evaluate(User $user, Documento $documento): bool
     {
-        // El coordinador NO participa en evaluaciones académicas
+        // El coordinador NO participa en evaluaciones
         if ($user->hasRole('coordinador')) {
             return false;
         }
 
-        // Solo aplica a Asesores
-        if (!$user->hasRole('asesor') || !$user->asesor) {
-            return false;
-        }
-
-        // El alumno debe estarle asignado
-        $esSuAlumno = Asignacion::where('asesor_id', $user->asesor->id)
-            ->where('alumno_id', $documento->alumno_id)
-            ->exists();
-
-        if (!$esSuAlumno) {
-            return false;
-        }
-
         // El documento debe estar En Revisión
-        return $documento->estado === DocumentoEstado::EnRevision;
+        if ($documento->estado !== DocumentoEstado::EnRevision) {
+            return false;
+        }
+
+        // Si es Servicios Escolares, la etapa debe corresponderle
+        if ($user->hasRole('servicios_escolares')) {
+            return $documento->etapa->tipo === 'servicios_escolares';
+        }
+
+        // Si es Asesor, debe ser académico y debe estarle asignado
+        if ($user->hasRole('asesor')) {
+            if (!$user->asesor || $documento->etapa->tipo !== 'asesor') {
+                return false;
+            }
+
+            return Asignacion::where('asesor_id', $user->asesor->id)
+                ->where('alumno_id', $documento->alumno_id)
+                ->exists();
+        }
+
+        return false;
     }
 }

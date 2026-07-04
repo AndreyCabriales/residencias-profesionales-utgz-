@@ -13,4 +13,5 @@ interface DocumentoRepositoryInterface
     public function getByAlumnoAndEtapa(int $alumnoId, int $etapaId): Collection;
     public function updateEstado(int $documentoId, DocumentoEstado $estado, ?string $retroalimentacion = null): bool;
     public function getPendientesPorAsesor(int $asesorId): Collection;
+    public function getPendientesServiciosEscolares(): Collection;
 }

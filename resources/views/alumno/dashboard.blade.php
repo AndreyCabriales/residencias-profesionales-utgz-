@@ -220,6 +220,10 @@
                                     </div>
                                     <div x-show="errorMsg" x-transition class="mt-2 p-3 bg-red-50 border border-red-200 rounded-md text-sm text-red-800" style="display: none;" x-text="errorMsg"></div>
                                 </div>
+                                <div class="col-span-1 md:col-span-2">
+                                    <label class="block text-sm font-medium text-gray-700 mb-1" for="nombre_proyecto">Nombre del Proyecto <span class="text-red-500">*</span></label>
+                                    <input type="text" id="nombre_proyecto" name="nombre_proyecto" value="{{ old('nombre_proyecto', $alumno->nombre_proyecto ?? '') }}" required class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-utgz-accent focus:border-utgz-accent sm:text-sm">
+                                </div>
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-1" for="company_nombre">Nombre del Asesor <span class="text-red-500">*</span></label>
                                     <input type="text" id="company_nombre" name="company_nombre" value="{{ old('company_nombre', $alumno->companyAdvisor->nombre ?? '') }}" required class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-utgz-accent focus:border-utgz-accent sm:text-sm">

@@ -5,7 +5,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Alumno extends Model {
     protected $table = 'alumnos';
-    protected $fillable = ['user_id', 'matricula', 'etapa_id', 'carrera', 'cuatrimestre', 'estado_residencia', 'fecha_finalizacion'];
+    protected $fillable = ['user_id', 'matricula', 'etapa_id', 'carrera', 'cuatrimestre', 'nombre_proyecto', 'estado_residencia', 'fecha_finalizacion'];
     
     protected $casts = [
         'estado_residencia' => \App\Enums\ResidenciaEstado::class,

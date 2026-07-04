@@ -11,7 +11,7 @@ class EtapaSeeder extends Seeder {
                 'codigo' => 'FOR-06-12',
                 'nombre' => 'Carta de Aceptación',
                 'descripcion' => 'Documento emitido por la empresa aceptando al alumno.',
-                'tipo' => 'documento',
+                'tipo' => 'servicios_escolares',
                 'orden' => 1,
                 'activo' => true
             ],
@@ -19,7 +19,7 @@ class EtapaSeeder extends Seeder {
                 'codigo' => 'FOR-06-13',
                 'nombre' => 'Reporte Parcial',
                 'descripcion' => 'Reporte a la mitad de la estadía.',
-                'tipo' => 'documento',
+                'tipo' => 'asesor',
                 'orden' => 2,
                 'activo' => true
             ],
@@ -27,7 +27,7 @@ class EtapaSeeder extends Seeder {
                 'codigo' => 'FOR-06-14',
                 'nombre' => 'Reporte Final',
                 'descripcion' => 'Reporte de conclusión de la estadía.',
-                'tipo' => 'documento',
+                'tipo' => 'asesor',
                 'orden' => 3,
                 'activo' => true
             ],
@@ -35,7 +35,7 @@ class EtapaSeeder extends Seeder {
                 'codigo' => 'FOR-06-10',
                 'nombre' => 'Evaluación Final',
                 'descripcion' => 'Evaluación del desempeño realizada por la empresa.',
-                'tipo' => 'documento',
+                'tipo' => 'servicios_escolares',
                 'orden' => 4,
                 'activo' => true
             ],

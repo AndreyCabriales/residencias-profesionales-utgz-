@@ -12,6 +12,7 @@ class RoleSeeder extends Seeder {
         $coordinadorRole = Role::create(['name' => 'coordinador']);
         $asesorRole = Role::create(['name' => 'asesor']);
         $alumnoRole = Role::create(['name' => 'alumno']);
+        $serviciosRole = Role::create(['name' => 'servicios_escolares']);
 
         $coordinador = User::create([
             'name' => 'Coordinador UTGZ',
@@ -19,6 +20,13 @@ class RoleSeeder extends Seeder {
             'password' => bcrypt('Admin1234!')
         ]);
         $coordinador->assignRole($coordinadorRole);
+
+        $servicios = User::create([
+            'name' => 'Servicios Escolares',
+            'email' => 'escolares@utgz.mx',
+            'password' => bcrypt('Admin1234!')
+        ]);
+        $servicios->assignRole($serviciosRole);
 
         // Asesores (por carrera)
         $asesoresData = [

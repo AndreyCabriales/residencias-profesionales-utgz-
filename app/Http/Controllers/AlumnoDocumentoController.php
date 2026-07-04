@@ -45,13 +45,14 @@ class AlumnoDocumentoController extends Controller
                 $alumno->etapa_id
             );
 
-            // 3. Si la etapa es FOR-06-12, capturamos los datos de la empresa y asesor organizacional
+            // 3. Si la etapa es FOR-06-12, capturamos los datos de la empresa, asesor organizacional y proyecto
             if ($alumno->etapa->codigo === 'FOR-06-12' && $request->has('company_empresa')) {
                 $request->validate([
                     'company_empresa' => 'required|string|max:255',
                     'company_nombre' => 'required|string|max:255',
                     'company_puesto' => 'required|string|max:255',
                     'company_telefono' => 'nullable|string|max:20',
+                    'nombre_proyecto' => 'required|string|max:255',
                 ]);
 
                 \App\Models\CompanyAdvisor::updateOrCreate(
@@ -63,6 +64,10 @@ class AlumnoDocumentoController extends Controller
                         'telefono' => $request->input('company_telefono'),
                     ]
                 );
+
+                $alumno->update([
+                    'nombre_proyecto' => $request->input('nombre_proyecto'),
+                ]);
             }
 
             return back()->with('success', 'Documento subido correctamente. En espera de revisión por tu asesor.');

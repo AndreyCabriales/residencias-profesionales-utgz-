@@ -49,6 +49,20 @@ class DocumentoRepository implements DocumentoRepositoryInterface
         return Documento::whereHas('alumno.asignacion', function($query) use ($asesorId) {
             $query->where('asesor_id', $asesorId);
         })
+        ->whereHas('etapa', function($query) {
+            $query->where('tipo', 'asesor');
+        })
+        ->where('estado', DocumentoEstado::EnRevision)
+        ->with(['alumno.user', 'etapa'])
+        ->orderBy('created_at', 'asc')
+        ->get();
+    }
+
+    public function getPendientesServiciosEscolares(): Collection
+    {
+        return Documento::whereHas('etapa', function($query) {
+            $query->where('tipo', 'servicios_escolares');
+        })
         ->where('estado', DocumentoEstado::EnRevision)
         ->with(['alumno.user', 'etapa'])
         ->orderBy('created_at', 'asc')

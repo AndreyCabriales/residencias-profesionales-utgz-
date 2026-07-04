@@ -10,6 +10,16 @@ Route::get('/', function () {
 Route::view('/privacidad', 'privacidad')->name('privacidad');
 
 Route::get('/dashboard', function () {
+    $user = auth()->user();
+    if ($user->hasRole('coordinador')) {
+        return redirect()->route('coordinador.dashboard');
+    } elseif ($user->hasRole('servicios_escolares')) {
+        return redirect()->route('servicios_escolares.dashboard');
+    } elseif ($user->hasRole('asesor')) {
+        return redirect()->route('asesor.dashboard');
+    } elseif ($user->hasRole('alumno')) {
+        return redirect()->route('alumno.dashboard');
+    }
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
@@ -57,6 +67,13 @@ Route::middleware(['auth', 'role:asesor'])->group(function () {
 Route::middleware(['auth', 'role:alumno'])->group(function () {
     Route::get('/alumno/dashboard', [DashboardController::class, 'alumno'])->name('alumno.dashboard');
     Route::post('/alumno/documentos', [AlumnoDocumentoController::class, 'store'])->name('alumno.documentos.store');
+});
+
+use App\Http\Controllers\ServiciosEscolaresController;
+
+Route::middleware(['auth', 'role:servicios_escolares'])->group(function () {
+    Route::get('/servicios-escolares/dashboard', [ServiciosEscolaresController::class, 'dashboard'])->name('servicios_escolares.dashboard');
+    Route::post('/servicios-escolares/documentos/{documento}/revisar', [ServiciosEscolaresController::class, 'revisar'])->name('servicios_escolares.documentos.revisar');
 });
 
 require __DIR__.'/auth.php';
