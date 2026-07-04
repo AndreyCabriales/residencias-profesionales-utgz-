@@ -203,7 +203,18 @@
                                             <div>
                                                 <p class="font-bold">Ubicación encontrada mediante Nominatim API (OpenStreetMap):</p>
                                                 <p x-text="resultado.display_name" class="mt-1 text-xs text-blue-700"></p>
-                                                <p class="mt-1 text-xs text-blue-600 font-mono">Lat: <span x-text="resultado.lat"></span> | Lon: <span x-text="resultado.lon"></span></p>
+                                                
+                                                <div class="mt-3 w-full h-48 bg-gray-200 rounded-md overflow-hidden border border-blue-200 shadow-inner">
+                                                    <iframe width="100%" height="100%" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" 
+                                                        :src="`https://www.openstreetmap.org/export/embed.html?bbox=${parseFloat(resultado.lon)-0.005}%2C${parseFloat(resultado.lat)-0.005}%2C${parseFloat(resultado.lon)+0.005}%2C${parseFloat(resultado.lat)+0.005}&layer=mapnik&marker=${resultado.lat}%2C${resultado.lon}`">
+                                                    </iframe>
+                                                </div>
+                                                <div class="mt-2 text-right">
+                                                    <a :href="`https://www.openstreetmap.org/?mlat=${resultado.lat}&mlon=${resultado.lon}#map=17/${resultado.lat}/${resultado.lon}`" target="_blank" class="text-xs font-semibold text-blue-600 hover:text-blue-800 hover:underline flex items-center justify-end gap-1">
+                                                        Abrir mapa completo
+                                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                                                    </a>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
