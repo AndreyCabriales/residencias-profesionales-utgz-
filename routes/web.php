@@ -79,6 +79,13 @@ Route::middleware(['auth', 'role:servicios_escolares'])->group(function () {
 require __DIR__.'/auth.php';
 
 // Rutas de API propias (para cumplir rúbrica de APIs REST)
-Route::prefix('api')->group(function () {
+Route::prefix('api')->middleware('auth')->group(function () {
     Route::get('/alumnos/stats', [\App\Http\Controllers\Api\AlumnoApiController::class, 'stats'])->name('api.alumnos.stats');
+    
+    // Calendario y Asesoriaes
+    Route::get('/calendario', [\App\Http\Controllers\Api\CalendarioController::class, 'index'])->name('api.calendario.index');
+    
+    Route::post('/Asesoriaes', [\App\Http\Controllers\Api\AsesoriaController::class, 'store'])->name('api.Asesoriaes.store');
+    Route::put('/Asesoriaes/{id}', [\App\Http\Controllers\Api\AsesoriaController::class, 'update'])->name('api.Asesoriaes.update');
+    Route::delete('/Asesoriaes/{id}', [\App\Http\Controllers\Api\AsesoriaController::class, 'destroy'])->name('api.Asesoriaes.destroy');
 });

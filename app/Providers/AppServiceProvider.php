@@ -20,6 +20,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(DocumentoRepositoryInterface::class, DocumentoRepository::class);
         $this->app->bind(AlumnoRepositoryInterface::class, AlumnoRepository::class);
         $this->app->bind(NotificacionRepositoryInterface::class, NotificacionRepository::class);
+        $this->app->bind(\App\Repositories\Contracts\CalendarioRepositoryInterface::class, \App\Repositories\CalendarioRepository::class);
+        $this->app->bind(\App\Repositories\Contracts\AsesoriaRepositoryInterface::class, \App\Repositories\AsesoriaRepository::class);
     }
 
     /**
@@ -28,6 +30,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         \Illuminate\Support\Facades\Gate::policy(\App\Models\Documento::class, \App\Policies\DocumentoPolicy::class);
+        \Illuminate\Support\Facades\Gate::policy(\App\Models\Asesoria::class, \App\Policies\AsesoriaPolicy::class);
 
         if (app()->environment('production')) {
             \Illuminate\Support\Facades\URL::forceScheme('https');
