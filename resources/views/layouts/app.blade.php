@@ -154,6 +154,7 @@
                             background: '#0D1B2A',
                             color: '#F0F4F8',
                             width: '26em',
+                            heightAuto: false,
                             customClass: {
                                 popup: 'border border-gray-700 shadow-2xl rounded-xl',
                                 title: 'text-xl font-bold',
@@ -194,6 +195,7 @@
                             background: '#0D1B2A',
                             color: '#F0F4F8',
                             width: '26em',
+                            heightAuto: false,
                             customClass: {
                                 popup: 'border border-gray-700 shadow-2xl rounded-xl',
                                 title: 'text-xl font-bold',
