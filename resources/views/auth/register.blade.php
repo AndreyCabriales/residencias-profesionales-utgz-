@@ -39,6 +39,17 @@
             <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
         </div>
 
+        <!-- Aviso de Privacidad -->
+        <div class="block mt-4">
+            <label for="aviso_privacidad" class="inline-flex items-center">
+                <input id="aviso_privacidad" type="checkbox" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" name="aviso_privacidad" required>
+                <span class="ms-2 text-sm text-gray-600">
+                    He leído y acepto el <a href="{{ route('privacidad') }}" target="_blank" class="underline text-indigo-600 hover:text-indigo-900">Aviso de Privacidad</a>
+                </span>
+            </label>
+            <x-input-error :messages="$errors->get('aviso_privacidad')" class="mt-2" />
+        </div>
+
         <div class="flex items-center justify-end mt-4">
             <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('login') }}">
                 {{ __('Already registered?') }}

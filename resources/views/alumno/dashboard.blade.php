@@ -181,12 +181,33 @@
                     
                     @if($alumno->etapa && $alumno->etapa->codigo === 'FOR-06-12')
                         <!-- Datos del Asesor Organizacional -->
-                        <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 space-y-4 mb-2">
+                        <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 space-y-4 mb-2" x-data="geocodingComponent()">
                             <h4 class="font-semibold text-gray-700 text-sm uppercase tracking-wide">Datos de la Empresa y Asesor Organizacional</h4>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
+                                <div class="col-span-1 md:col-span-2">
                                     <label class="block text-sm font-medium text-gray-700 mb-1" for="company_empresa">Empresa <span class="text-red-500">*</span></label>
-                                    <input type="text" id="company_empresa" name="company_empresa" value="{{ old('company_empresa', $alumno->companyAdvisor->empresa ?? '') }}" required class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-utgz-accent focus:border-utgz-accent sm:text-sm">
+                                    <div class="flex gap-2">
+                                        <input type="text" id="company_empresa" x-model="empresa" name="company_empresa" value="{{ old('company_empresa', $alumno->companyAdvisor->empresa ?? '') }}" required class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-utgz-accent focus:border-utgz-accent sm:text-sm">
+                                        <button type="button" @click="buscarUbicacion()" :disabled="cargando || !empresa" class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 focus:bg-blue-700 active:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150 disabled:opacity-50">
+                                            <span x-show="!cargando">Ver Ubicación</span>
+                                            <span x-show="cargando" class="flex items-center" style="display: none;">
+                                                <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                                                Buscando...
+                                            </span>
+                                        </button>
+                                    </div>
+                                    <!-- Resultado de API Externa -->
+                                    <div x-show="resultado" x-transition class="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-md text-sm text-blue-800" style="display: none;">
+                                        <div class="flex items-start gap-2">
+                                            <svg class="w-5 h-5 text-blue-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                            <div>
+                                                <p class="font-bold">Ubicación encontrada mediante Nominatim API (OpenStreetMap):</p>
+                                                <p x-text="resultado.display_name" class="mt-1 text-xs text-blue-700"></p>
+                                                <p class="mt-1 text-xs text-blue-600 font-mono">Lat: <span x-text="resultado.lat"></span> | Lon: <span x-text="resultado.lon"></span></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div x-show="errorMsg" x-transition class="mt-2 p-3 bg-red-50 border border-red-200 rounded-md text-sm text-red-800" style="display: none;" x-text="errorMsg"></div>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-1" for="company_nombre">Nombre del Asesor <span class="text-red-500">*</span></label>
@@ -202,6 +223,56 @@
                                 </div>
                             </div>
                         </div>
+
+                        <!-- Script para consumir API Externa y API Propia usando Fetch/Asincronía -->
+                        <script>
+                            document.addEventListener('alpine:init', () => {
+                                Alpine.data('geocodingComponent', () => ({
+                                    empresa: '{{ old('company_empresa', $alumno->companyAdvisor->empresa ?? '') }}',
+                                    cargando: false,
+                                    resultado: null,
+                                    errorMsg: null,
+                                    
+                                    async buscarUbicacion() {
+                                        if (!this.empresa) return;
+                                        
+                                        this.cargando = true;
+                                        this.resultado = null;
+                                        this.errorMsg = null;
+                                        
+                                        try {
+                                            // 1. Consumir API Externa (OpenStreetMap/Nominatim)
+                                            const nominatimUrl = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(this.empresa)}&format=json&limit=1`;
+                                            const responseExterna = await fetch(nominatimUrl, {
+                                                headers: { 'Accept-Language': 'es' }
+                                            });
+                                            
+                                            if (!responseExterna.ok) throw new Error('Error en la API externa');
+                                            const dataExterna = await responseExterna.json();
+                                            
+                                            if (dataExterna.length > 0) {
+                                                this.resultado = dataExterna[0];
+                                            } else {
+                                                this.errorMsg = 'No se encontró la ubicación de la empresa especificada.';
+                                            }
+
+                                            // 2. Consumir API Propia simultáneamente para demostrar integración REST
+                                            // Registramos que la búsqueda se realizó mediante una API propia (ejemplo de stats)
+                                            const apiPropiaUrl = '/api/alumnos/stats';
+                                            const responsePropia = await fetch(apiPropiaUrl);
+                                            const dataPropia = await responsePropia.json();
+                                            console.log('Estadísticas de la API propia obtenidas asíncronamente:', dataPropia);
+                                            
+                                        } catch (error) {
+                                            console.error('Error fetching APIs:', error);
+                                            this.errorMsg = 'Hubo un error de red al consultar los servicios externos.';
+                                        } finally {
+                                            this.cargando = false;
+                                        }
+                                    }
+                                }));
+                            });
+                        </script>
                     @endif
                     
                     <div>

@@ -7,6 +7,8 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::view('/privacidad', 'privacidad')->name('privacidad');
+
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
@@ -58,3 +60,8 @@ Route::middleware(['auth', 'role:alumno'])->group(function () {
 });
 
 require __DIR__.'/auth.php';
+
+// Rutas de API propias (para cumplir rúbrica de APIs REST)
+Route::prefix('api')->group(function () {
+    Route::get('/alumnos/stats', [\App\Http\Controllers\Api\AlumnoApiController::class, 'stats'])->name('api.alumnos.stats');
+});

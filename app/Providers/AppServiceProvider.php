@@ -29,6 +29,10 @@ class AppServiceProvider extends ServiceProvider
     {
         \Illuminate\Support\Facades\Gate::policy(\App\Models\Documento::class, \App\Policies\DocumentoPolicy::class);
 
+        if (app()->environment('production')) {
+            \Illuminate\Support\Facades\URL::forceScheme('https');
+        }
+
         \Illuminate\Auth\Notifications\ResetPassword::toMailUsing(function ($notifiable, $token) {
             return (new \Illuminate\Notifications\Messages\MailMessage)
                 ->subject('Solicitud para restablecer tu contraseña')
