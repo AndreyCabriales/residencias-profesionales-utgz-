@@ -1,6 +1,4 @@
-<p align="center">
-  <img src="public/build/assets/utgz_logo-Bg5l8Q9u.png" alt="UTGZ Logo" width="200" />
-</p>
+
 
 # Sistema de Residencias Profesionales UTGZ
 
