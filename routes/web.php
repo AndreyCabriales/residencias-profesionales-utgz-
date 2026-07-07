@@ -3,6 +3,10 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
+Route::get('/ping', function () {
+    return 'pong';
+});
+
 Route::get('/', function () {
     return view('welcome');
 });
@@ -27,6 +31,21 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    
+    // Frontend Calendario
+    Route::get('/calendario', function () {
+        $alumnos = [];
+        if (auth()->user()->hasRole('asesor') && auth()->user()->asesor) {
+            $alumnos = App\Models\Alumno::whereHas('asignacion', function ($q) {
+                $q->where('asesor_id', auth()->user()->asesor->id);
+            })->with('user')->get();
+        }
+        $modalidades = App\Models\CatalogoItem::whereHas('catalogo', function($q) {
+            $q->where('nombre', 'modalidad_asesoria');
+        })->get();
+        
+        return view('calendario.index', compact('alumnos', 'modalidades'));
+    })->name('calendario.index');
 });
 
 use App\Http\Controllers\DashboardController;
@@ -56,6 +75,8 @@ Route::middleware(['auth', 'role:coordinador'])->group(function () {
     Route::get('/coordinador/asesores', [CoordinadorAsesorController::class, 'index'])->name('coordinador.asesores.index');
     Route::get('/coordinador/asesores/crear', [CoordinadorAsesorController::class, 'create'])->name('coordinador.asesores.create');
     Route::post('/coordinador/asesores', [CoordinadorAsesorController::class, 'store'])->name('coordinador.asesores.store');
+    Route::get('/coordinador/asesores/{asesor}/editar', [CoordinadorAsesorController::class, 'edit'])->name('coordinador.asesores.edit');
+    Route::put('/coordinador/asesores/{asesor}', [CoordinadorAsesorController::class, 'update'])->name('coordinador.asesores.update');
 });
 
 Route::middleware(['auth', 'role:asesor'])->group(function () {
@@ -79,13 +100,20 @@ Route::middleware(['auth', 'role:servicios_escolares'])->group(function () {
 require __DIR__.'/auth.php';
 
 // Rutas de API propias (para cumplir rúbrica de APIs REST)
-Route::prefix('api')->middleware('auth')->group(function () {
-    Route::get('/alumnos/stats', [\App\Http\Controllers\Api\AlumnoApiController::class, 'stats'])->name('api.alumnos.stats');
+Route::prefix('api/v1')->middleware('auth')->group(function () {
+    Route::get('/alumnos/stats', [\App\Http\Controllers\Api\AlumnoApiController::class, 'stats'])->name('api.v1.alumnos.stats');
     
-    // Calendario y Asesoriaes
-    Route::get('/calendario', [\App\Http\Controllers\Api\CalendarioController::class, 'index'])->name('api.calendario.index');
+    // Calendario y Asesorias
+    Route::get('/calendario', [\App\Http\Controllers\Api\CalendarioController::class, 'index'])->name('api.v1.calendario.index');
     
-    Route::post('/Asesoriaes', [\App\Http\Controllers\Api\AsesoriaController::class, 'store'])->name('api.Asesoriaes.store');
-    Route::put('/Asesoriaes/{id}', [\App\Http\Controllers\Api\AsesoriaController::class, 'update'])->name('api.Asesoriaes.update');
-    Route::delete('/Asesoriaes/{id}', [\App\Http\Controllers\Api\AsesoriaController::class, 'destroy'])->name('api.Asesoriaes.destroy');
+    Route::post('/asesorias', [\App\Http\Controllers\Api\AsesoriaController::class, 'store'])->name('api.v1.asesorias.store');
+    Route::get('/asesorias/{id}', [\App\Http\Controllers\Api\AsesoriaController::class, 'show'])->name('api.v1.asesorias.show');
+    Route::put('/asesorias/{id}', [\App\Http\Controllers\Api\AsesoriaController::class, 'update'])->name('api.v1.asesorias.update');
+    Route::delete('/asesorias/{id}', [\App\Http\Controllers\Api\AsesoriaController::class, 'destroy'])->name('api.v1.asesorias.destroy');
+    Route::post('/asesorias/{id}/comentarios', [\App\Http\Controllers\Api\AsesoriaController::class, 'storeComentario'])->name('api.v1.asesorias.comentarios.store');
+    Route::post('/asesorias/{id}/confirmar', [\App\Http\Controllers\Api\AsesoriaController::class, 'confirmar'])->name('api.v1.asesorias.confirmar');
+    
+    // Dashboard Progress
+    Route::get('/dashboard/progreso', [\App\Http\Controllers\Api\DashboardApiController::class, 'progreso'])->name('api.v1.dashboard.progreso');
+    Route::post('/dashboard/finalizar-seguimiento', [\App\Http\Controllers\Api\DashboardApiController::class, 'finalizarSeguimiento'])->name('api.v1.dashboard.finalizar_seguimiento');
 });

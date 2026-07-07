@@ -24,6 +24,7 @@ class StoreDocumentoRequest extends FormRequest
     {
         return [
             'documento' => 'required|file|mimes:pdf|max:5120', // Máximo 5MB (5120 KB)
+            'etapa_id' => 'required|exists:etapas,id',
         ];
     }
 

@@ -8,9 +8,16 @@ use Illuminate\Database\Eloquent\Collection;
 
 class AsesoriaRepository implements AsesoriaRepositoryInterface
 {
+    public function getAll(): Collection
+    {
+        return Asesoria::with(['asesor.user', 'alumno.user', 'modalidad', 'estado', 'resultado'])
+            ->orderBy('fecha_hora', 'asc')
+            ->get();
+    }
+
     public function getPorAlumno(int $alumnoId): Collection
     {
-        return Asesoria::with('asesor.user')
+        return Asesoria::with(['asesor.user', 'modalidad', 'estado', 'resultado'])
             ->where('alumno_id', $alumnoId)
             ->orderBy('fecha_hora', 'asc')
             ->get();
@@ -18,7 +25,7 @@ class AsesoriaRepository implements AsesoriaRepositoryInterface
 
     public function getPorAsesor(int $asesorId): Collection
     {
-        return Asesoria::with('alumno.user')
+        return Asesoria::with(['alumno.user', 'modalidad', 'estado', 'resultado'])
             ->where('asesor_id', $asesorId)
             ->orderBy('fecha_hora', 'asc')
             ->get();

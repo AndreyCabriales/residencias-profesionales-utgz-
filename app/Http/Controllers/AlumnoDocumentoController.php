@@ -28,25 +28,23 @@ class AlumnoDocumentoController extends Controller
                 return back()->with('error', 'No se encontró el registro de alumno asociado a esta cuenta.');
             }
 
-            // Validación de negocio: Evitar dobles subidas si ya hay uno pendiente
-            $tienePendiente = \App\Models\Documento::where('alumno_id', $alumno->id)
-                ->where('etapa_id', $alumno->etapa_id)
-                ->where('estado', \App\Enums\DocumentoEstado::EnRevision)
-                ->exists();
+            $etapa = \App\Models\Etapa::findOrFail($request->etapa_id);
 
-            if ($tienePendiente) {
-                return back()->with('error', 'Ya tienes un documento pendiente de revisión para esta etapa. Espera a que tu asesor lo califique.');
+            // Validación de negocio: Usar el servicio para validar reglas por fase
+            $procesoService = app(\App\Services\ProcesoEstadiaService::class);
+            if (!$procesoService->puedeSubirDocumento($alumno, $etapa)) {
+                return back()->with('error', 'No tienes permitido subir este documento en este momento o ya tienes uno pendiente.');
             }
 
             // 2. Usar el servicio para subir y registrar el documento
             $this->documentoService->subirDocumento(
                 $request->file('documento'),
                 $alumno->id,
-                $alumno->etapa_id
+                $etapa->id
             );
 
             // 3. Si la etapa es FOR-06-12, capturamos los datos de la empresa, asesor organizacional y proyecto
-            if ($alumno->etapa->codigo === 'FOR-06-12' && $request->has('company_empresa')) {
+            if ($etapa->codigo === 'FOR-06-12' && $request->has('company_empresa')) {
                 $request->validate([
                     'company_empresa' => 'required|string|max:255',
                     'company_nombre' => 'required|string|max:255',

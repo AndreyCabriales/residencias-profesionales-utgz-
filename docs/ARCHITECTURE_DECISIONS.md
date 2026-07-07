@@ -37,7 +37,7 @@ Este documento registra las decisiones arquitectÃ³nicas importantes tomadas dura
 **Consecuencias:**
 - Desacoplamiento total. El `AsesorDocumentoController` no sabe nada de etapas ni notificaciones. Simplemente aprueba un documento y dispara el evento.
 
-## ADR-005: Interfaz de Usuario y Branding "Aesthetic"
+## ADR-005: Interfaz de Usuario y Branding "Escolar"
 
 **Fecha:** Julio 2026
 **Contexto:** Los sistemas institucionales universitarios suelen ser percibidos como anticuados, grises y poco responsivos.
@@ -46,12 +46,12 @@ Este documento registra las decisiones arquitectÃ³nicas importantes tomadas dura
 - Interfaz muy moderna ("wow effect") que incentiva el uso de la plataforma.
 - El cÃ³digo HTML/Blade puede volverse verboso por la cantidad de clases, requiriendo extraer patrones a componentes (`<x-card>`) en un futuro.
 
-## ADR-006: Implementación de Policies para prevenir IDOR
+## ADR-006: Implementaciï¿½n de Policies para prevenir IDOR
 
 **Fecha:** Julio 2026
-**Contexto:** Existía una vulnerabilidad crítica de IDOR donde un usuario malintencionado podía modificar la URL (ej. /asesor/documentos/5/descargar) y acceder o evaluar documentos de otros alumnos o asesores.
-**Decisión:** Se centralizó la lógica de autorización creando \DocumentoPolicy\ y aplicando Route Model Binding implícito en las rutas. En lugar de dispersar sentencias \if\ por los controladores para validar propiedad, el controlador simplemente delega a \Gate::authorize()\.
+**Contexto:** Existï¿½a una vulnerabilidad crï¿½tica de IDOR donde un usuario malintencionado podï¿½a modificar la URL (ej. /asesor/documentos/5/descargar) y acceder o evaluar documentos de otros alumnos o asesores.
+**Decisiï¿½n:** Se centralizï¿½ la lï¿½gica de autorizaciï¿½n creando \DocumentoPolicy\ y aplicando Route Model Binding implï¿½cito en las rutas. En lugar de dispersar sentencias \if\ por los controladores para validar propiedad, el controlador simplemente delega a \Gate::authorize()
 **Consecuencias:**
-- Reducción del código de validación en controladores.
-- Protección robusta y centralizada contra ataques IDOR.
-- Menos propensión a errores humanos en futuros desarrollos.
+- Reducciï¿½n del cï¿½digo de validaciï¿½n en controladores.
+- Protecciï¿½n robusta y centralizada contra ataques IDOR.
+- Menos propensiï¿½n a errores humanos en futuros desarrollos.

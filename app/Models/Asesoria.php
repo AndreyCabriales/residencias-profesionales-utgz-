@@ -16,14 +16,14 @@ class Asesoria extends Model
         'alumno_id',
         'titulo',
         'descripcion',
-        'observaciones',
+        'resumen_final',
         'fecha_hora',
         'duracion',
-        'modalidad',
+        'catalogo_modalidad_id',
+        'catalogo_estado_id',
+        'catalogo_resultado_id',
         'lugar',
-        'provider',
         'enlace',
-        'estado',
         'recurrencia',
     ];
 
@@ -42,8 +42,33 @@ class Asesoria extends Model
         return $this->belongsTo(Alumno::class);
     }
 
+    public function modalidad()
+    {
+        return $this->belongsTo(CatalogoItem::class, 'catalogo_modalidad_id');
+    }
+
+    public function estado()
+    {
+        return $this->belongsTo(CatalogoItem::class, 'catalogo_estado_id');
+    }
+
+    public function resultado()
+    {
+        return $this->belongsTo(CatalogoItem::class, 'catalogo_resultado_id');
+    }
+
+    public function activityLogs()
+    {
+        return $this->morphMany(ActivityLog::class, 'loggable');
+    }
+
+    public function comentarios()
+    {
+        return $this->morphMany(Comentario::class, 'commentable');
+    }
+
     public function archivos()
     {
-        return $this->hasMany(AsesoriaArchivo::class);
+        return $this->morphMany(Archivo::class, 'fileable');
     }
 }

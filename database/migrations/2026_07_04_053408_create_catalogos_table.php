@@ -11,11 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('asesoria_archivos', function (Blueprint $table) {
+        Schema::create('catalogos', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('asesoria_id')->constrained('asesorias')->onDelete('cascade');
-            $table->string('nombre_archivo');
-            $table->string('ruta');
+            $table->string('nombre')->unique();
+            $table->string('descripcion')->nullable();
             $table->timestamps();
         });
     }
@@ -25,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('asesoria_archivos');
+        Schema::dropIfExists('catalogos');
     }
 };

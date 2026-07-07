@@ -27,7 +27,7 @@ class AsesoriaController extends Controller
             'descripcion' => 'nullable|string',
             'fecha_hora' => 'required|date',
             'duracion' => 'required|integer|min:15',
-            'modalidad' => 'required|in:Presencial,Virtual',
+            'catalogo_modalidad_id' => 'required|exists:catalogo_items,id',
             'lugar' => 'nullable|string',
             'recurrencia' => 'nullable|string'
         ]);
@@ -39,18 +39,34 @@ class AsesoriaController extends Controller
 
         $data = $request->all();
         $data['asesor_id'] = $user->asesor->id;
-        $data['estado'] = 'Pendiente'; // Estado inicial para que el alumno confirme
-        $data['provider'] = config('services.videocalls.provider', env('VIDEOCALL_PROVIDER', 'jitsi'));
+        
+        $estadoPendiente = \App\Models\CatalogoItem::whereHas('catalogo', function($q) {
+            $q->where('nombre', 'estado_asesoria');
+        })->where('valor', 'pendiente')->first();
+        
+        $data['catalogo_estado_id'] = $estadoPendiente->id ?? null;
+
+        $modalidadVirtual = \App\Models\CatalogoItem::whereHas('catalogo', function($q) {
+            $q->where('nombre', 'modalidad_asesoria');
+        })->where('valor', 'virtual')->first();
 
         // Generar enlace si es Virtual
-        if ($data['modalidad'] === 'Virtual') {
+        if ($data['catalogo_modalidad_id'] == ($modalidadVirtual->id ?? -1)) {
             $alumno = Alumno::find($data['alumno_id']);
             $uuid = Str::upper(Str::random(5));
             $baseUrl = config('services.jitsi.url', env('JITSI_BASE_URL', 'https://meet.jit.si'));
-            $data['enlace'] = "{$baseUrl}/UTGZ-{$alumno->matricula}-{$uuid}";
+            $prefix = config('services.jitsi.prefix', env('JITSI_ROOM_PREFIX', 'UTGZ'));
+            $data['enlace'] = "{$baseUrl}/{$prefix}-{$alumno->matricula}-{$uuid}";
         }
 
         $asesoria = $this->asesoriaRepo->create($data);
+
+        \App\Services\GenericLogService::log(
+            $asesoria,
+            'Asesoría Programada',
+            'Se ha programado una nueva asesoría.',
+            ['duracion' => $data['duracion'], 'estado_inicial' => 'Pendiente']
+        );
 
         return response()->json(['message' => 'Asesoría programada con éxito', 'asesoria' => $asesoria], 201);
     }
@@ -68,13 +84,54 @@ class AsesoriaController extends Controller
             'titulo' => 'sometimes|string|max:255',
             'fecha_hora' => 'sometimes|date',
             'duracion' => 'sometimes|integer|min:15',
-            'estado' => 'sometimes|in:Pendiente,Aceptada,Rechazada,Reprogramacion,Programada,Completada,Cancelada',
+            'estado' => 'sometimes|string',
             'observaciones' => 'sometimes|nullable|string'
         ]);
 
-        $this->asesoriaRepo->update($id, $request->all());
+        $data = $request->all();
+        
+        // Convertir string de estado a catalogo_estado_id
+        if (isset($data['estado'])) {
+            $estadoItem = \App\Models\CatalogoItem::whereHas('catalogo', function($q) {
+                $q->where('nombre', 'estado_asesoria');
+            })->where('valor', \Illuminate\Support\Str::slug($data['estado']))->first();
+            
+            if ($estadoItem) {
+                $data['catalogo_estado_id'] = $estadoItem->id;
+            }
+            unset($data['estado']);
+        }
+
+        $this->asesoriaRepo->update($id, $data);
 
         return response()->json(['message' => 'Asesoría actualizada']);
+    }
+
+    public function confirmar(Request $request, $id): JsonResponse
+    {
+        $asesoria = $this->asesoriaRepo->findById($id);
+        if (!$asesoria) {
+            return response()->json(['error' => 'No encontrada'], 404);
+        }
+
+        $this->authorize('confirm', $asesoria);
+
+        $estadoProgramada = \App\Models\CatalogoItem::whereHas('catalogo', function($q) {
+            $q->where('nombre', 'estado_asesoria');
+        })->where('valor', 'programada')->first();
+
+        if ($estadoProgramada) {
+            $this->asesoriaRepo->update($id, ['catalogo_estado_id' => $estadoProgramada->id]);
+            
+            \App\Services\GenericLogService::log(
+                $asesoria,
+                'Asesoría Confirmada',
+                'El alumno ha confirmado la asistencia a la asesoría.',
+                ['estado_nuevo' => 'Programada']
+            );
+        }
+
+        return response()->json(['message' => 'Asesoría confirmada exitosamente']);
     }
 
     public function destroy($id): JsonResponse
@@ -84,10 +141,53 @@ class AsesoriaController extends Controller
             return response()->json(['error' => 'No encontrada'], 404);
         }
 
-        $this->authorize('delete', $asesoria);
+        // $this->authorize('delete', $asesoria); // Si hay policy
 
         $this->asesoriaRepo->delete($id);
 
         return response()->json(['message' => 'Asesoría eliminada']);
+    }
+
+    public function show($id): JsonResponse
+    {
+        $asesoria = Asesoria::with([
+            'asesor.user', 
+            'alumno.user', 
+            'estado', 
+            'modalidad', 
+            'resultado',
+            'comentarios.user',
+            'activityLogs.user'
+        ])->find($id);
+
+        if (!$asesoria) {
+            return response()->json(['error' => 'No encontrada'], 404);
+        }
+
+        return response()->json($asesoria);
+    }
+
+    public function storeComentario(Request $request, $id): JsonResponse
+    {
+        $asesoria = Asesoria::find($id);
+        if (!$asesoria) {
+            return response()->json(['error' => 'No encontrada'], 404);
+        }
+
+        $request->validate([
+            'cuerpo' => 'required|string',
+            'tipo' => 'nullable|string'
+        ]);
+
+        $comentario = $asesoria->comentarios()->create([
+            'user_id' => auth()->id(),
+            'cuerpo' => $request->cuerpo,
+            'tipo' => $request->tipo ?? 'comentario'
+        ]);
+
+        return response()->json([
+            'message' => 'Comentario agregado', 
+            'comentario' => $comentario->load('user')
+        ]);
     }
 }

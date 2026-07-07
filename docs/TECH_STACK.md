@@ -5,7 +5,7 @@ El Sistema de Residencias UTGZ se construyó seleccionando herramientas maduras,
 | Tecnología | ¿Para qué sirve? | ¿Por qué fue elegida y cómo la usamos? |
 |------------|------------------|---------------------------------------|
 | **PHP 8** | Lenguaje de programación del Backend. | Es el lenguaje de mayor adopción en la web. Usamos características modernas (Enums, Constructor Property Promotion, Type Hinting). |
-| **Laravel 11** | Framework Backend MVC. | Estandariza el desarrollo. Usamos su motor ORM (Eloquent), su enrutador, su motor de plantillas (Blade) y su sistema de Eventos. Elegido porque acelera el desarrollo seguro sin reinventar la rueda. |
+| **Laravel 12** | Framework Backend MVC. | Estandariza el desarrollo. Usamos su motor ORM (Eloquent), su enrutador, su motor de plantillas (Blade) y su sistema de Eventos. Elegido porque acelera el desarrollo seguro sin reinventar la rueda. |
 | **MySQL 8** | Sistema de Gestión de Bases de Datos Relacional. | Maneja la persistencia de datos (Usuarios, Documentos). Se eligió por su estabilidad e integridad referencial (Foreign Keys rígidas). |
 | **Tailwind CSS** | Framework Frontend de utilidades (CSS). | Permite diseñar interfaces (Dashboards) escribiendo clases directamente en el HTML (`bg-blue-500 hover:shadow`). Se eligió porque evita archivos CSS gigantes e inantenibles, garantizando consistencia "Aesthetic". |
 | **Alpine.js** | Framework Frontend de JavaScript ligero. | Añade interactividad (Modales, botones deshabilitables al hacer clic) sin el peso de React o Vue. Se usa mediante el atributo `x-data`. |

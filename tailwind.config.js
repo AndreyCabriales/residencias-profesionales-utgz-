@@ -15,14 +15,14 @@ export default {
                 sans: ['Inter', ...defaultTheme.fontFamily.sans],
             },
             colors: {
-                'utgz-bg': '#F0F4F8',
-                'utgz-primary': '#1A3A6B',
-                'utgz-accent': '#2D7DD2',
-                'utgz-sidebar': '#0D1B2A',
-                'utgz-text': '#1C1C1E',
-                'utgz-subtext': '#6B7280',
-                'utgz-success': '#10B981',
-                'utgz-error': '#EF4444',
+                'utgz-bg': '#F8FAFC', // Slate 50 (SaaS light background)
+                'utgz-primary': '#047857', // Emerald 600 (Elegant UTGZ Green)
+                'utgz-accent': '#10B981', // Emerald 500 (Vibrant Green for highlights)
+                'utgz-sidebar': '#022C22', // Emerald 950 (Very deep green, almost black for sidebar)
+                'utgz-text': '#0F172A', // Slate 900 (Dark text)
+                'utgz-subtext': '#64748B', // Slate 500 (Muted text)
+                'utgz-success': '#10B981', 
+                'utgz-error': '#E11D48', // Rose 600 (Elegant UTGZ Red)
                 'utgz-warning': '#F59E0B',
             }
         },

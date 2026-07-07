@@ -5,11 +5,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Alumno extends Model {
     protected $table = 'alumnos';
-    protected $fillable = ['user_id', 'matricula', 'etapa_id', 'carrera', 'cuatrimestre', 'nombre_proyecto', 'estado_residencia', 'fecha_finalizacion'];
+    protected $fillable = ['user_id', 'matricula', 'etapa_id', 'carrera', 'cuatrimestre', 'nombre_proyecto', 'estado_residencia', 'fecha_finalizacion', 'seguimiento_finalizado'];
     
     protected $casts = [
         'estado_residencia' => \App\Enums\ResidenciaEstado::class,
         'fecha_finalizacion' => 'datetime',
+        'seguimiento_finalizado' => 'boolean',
     ];
 
     public function user() { return $this->belongsTo(User::class); }

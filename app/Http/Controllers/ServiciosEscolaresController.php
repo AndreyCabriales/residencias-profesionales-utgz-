@@ -50,11 +50,16 @@ class ServiciosEscolaresController extends Controller
             ? DocumentoEstado::Aprobado 
             : DocumentoEstado::Rechazado;
 
-        $this->documentoRepository->updateEstado(
+        $exito = $this->documentoRepository->updateEstado(
             $documento->id, 
             $nuevoEstado,
             $request->retroalimentacion
         );
+
+        if ($exito) {
+            $documento->refresh();
+            event(new \App\Events\DocumentoRevisado($documento));
+        }
 
         return redirect()->route('servicios_escolares.dashboard')
             ->with('status', 'Documento evaluado correctamente.');

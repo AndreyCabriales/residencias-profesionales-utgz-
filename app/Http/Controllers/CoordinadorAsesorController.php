@@ -40,4 +40,35 @@ class CoordinadorAsesorController extends Controller
             return back()->withInput()->with('error', 'Error al registrar: ' . $e->getMessage());
         }
     }
+
+    public function edit(Asesor $asesor)
+    {
+        $asesor->load('user');
+        return view('coordinador.asesores.edit', compact('asesor'));
+    }
+
+    public function update(Request $request, Asesor $asesor)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $asesor->user_id,
+            'departamento' => 'nullable|string|max:255',
+        ]);
+
+        try {
+            $asesor->user->update([
+                'name' => $request->name,
+                'email' => $request->email,
+            ]);
+
+            $asesor->update([
+                'departamento' => $request->departamento,
+            ]);
+
+            return redirect()->route('coordinador.asesores.index')
+                ->with('success', 'Asesor actualizado exitosamente.');
+        } catch (\Exception $e) {
+            return back()->withInput()->with('error', 'Error al actualizar: ' . $e->getMessage());
+        }
+    }
 }

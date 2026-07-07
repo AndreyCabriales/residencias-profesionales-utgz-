@@ -24,17 +24,18 @@ class CalendarioController extends Controller
         $user = $request->user();
         $eventos = [];
 
-        // Traer eventos institucionales (comunes para todos)
-        $institucionales = $this->calendarioRepo->getEventosActivos();
-        foreach ($institucionales as $ev) {
+        // 1. Obtener Eventos Institucionales
+        $eventosInstitucionales = \App\Models\CalendarioAcademico::with('tipoEvento')->get();
+        foreach ($eventosInstitucionales as $ev) {
             $eventos[] = [
-                'id' => 'inst_'.$ev->id,
+                'id' => 'ev_'.$ev->id,
                 'title' => $ev->titulo,
                 'start' => $ev->fecha_inicio->toIso8601String(),
                 'end' => $ev->fecha_fin ? $ev->fecha_fin->toIso8601String() : null,
                 'color' => $ev->color,
                 'extendedProps' => [
-                    'tipo' => $ev->tipo_evento,
+                    'tipo' => 'Institucional',
+                    'tipoEvento' => $ev->tipoEvento->nombre ?? 'Evento',
                     'descripcion' => $ev->descripcion,
                     'creador' => $ev->creador->name ?? 'Sistema'
                 ]
@@ -43,7 +44,9 @@ class CalendarioController extends Controller
 
         // Traer asesorías según el rol
         $asesorias = collect();
-        if ($user->hasRole('asesor') && $user->asesor) {
+        if ($user->hasRole('coordinador')) {
+            $asesorias = $this->asesoriaRepo->getAll();
+        } elseif ($user->hasRole('asesor') && $user->asesor) {
             $asesorias = $this->asesoriaRepo->getPorAsesor($user->asesor->id);
         } elseif ($user->hasRole('alumno') && $user->alumno) {
             $asesorias = $this->asesoriaRepo->getPorAlumno($user->alumno->id);
@@ -54,9 +57,10 @@ class CalendarioController extends Controller
             
             // Asignar colores según estado
             $color = '#10B981'; // Verde por defecto
-            if ($ase->estado === 'Pendiente') $color = '#F59E0B'; // Naranja
-            if ($ase->estado === 'Rechazada' || $ase->estado === 'Cancelada') $color = '#EF4444'; // Rojo
-            if ($ase->estado === 'Reprogramacion') $color = '#8B5CF6'; // Morado
+            $estadoNombre = $ase->estado->nombre ?? 'Pendiente';
+            
+            if ($estadoNombre === 'Pendiente') $color = '#F59E0B'; // Naranja
+            if ($estadoNombre === 'Cancelada') $color = '#EF4444'; // Rojo
 
             $eventos[] = [
                 'id' => 'ase_'.$ase->id,
@@ -67,10 +71,11 @@ class CalendarioController extends Controller
                 'extendedProps' => [
                     'tipo' => 'Asesoria',
                     'descripcion' => $ase->descripcion,
-                    'modalidad' => $ase->modalidad,
+                    'modalidad' => $ase->modalidad->nombre ?? '',
                     'lugar' => $ase->lugar,
                     'enlace' => $ase->enlace,
-                    'estado' => $ase->estado,
+                    'estado' => $estadoNombre,
+                    'resultado' => $ase->resultado->nombre ?? '',
                     'alumno' => $ase->alumno->user->name ?? '',
                     'asesor' => $ase->asesor->user->name ?? '',
                 ]

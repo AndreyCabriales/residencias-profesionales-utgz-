@@ -13,7 +13,8 @@ class DashboardController extends Controller
     public function __construct(
         protected AlumnoRepositoryInterface $alumnoRepository,
         protected DocumentoRepositoryInterface $documentoRepository,
-        protected NotificacionRepositoryInterface $notificacionRepository
+        protected NotificacionRepositoryInterface $notificacionRepository,
+        protected \App\Repositories\Contracts\AsesoriaRepositoryInterface $asesoriaRepository
     ) {}
 
     public function coordinador()
@@ -48,14 +49,34 @@ class DashboardController extends Controller
         $documentosPendientes = [];
         $totalAlumnosAsignados = 0;
         $totalDocumentosPorRevisar = 0;
+        $asesoriasPendientes = collect();
+        $totalAsesoriasPendientes = 0;
+        $alumnosAsignadosList = [];
 
         if ($asesorId) {
             $documentosPendientes = $this->documentoRepository->getPendientesPorAsesor($asesorId);
             $totalDocumentosPorRevisar = count($documentosPendientes);
             $totalAlumnosAsignados = \App\Models\Asignacion::where('asesor_id', $asesorId)->count();
+            
+            $alumnosAsignadosList = \App\Models\Alumno::whereHas('asignacion', function($q) use ($asesorId) {
+                $q->where('asesor_id', $asesorId);
+            })->with('user')->get();
+
+            $asesoriasPendientes = $this->asesoriaRepository->getPorAsesor($asesorId)
+                ->filter(function ($a) {
+                    return strtolower($a->estado->nombre ?? '') === 'pendiente';
+                });
+            $totalAsesoriasPendientes = $asesoriasPendientes->count();
         }
 
-        return view('asesor.dashboard', compact('documentosPendientes', 'totalAlumnosAsignados', 'totalDocumentosPorRevisar'));
+        return view('asesor.dashboard', compact(
+            'documentosPendientes', 
+            'totalAlumnosAsignados', 
+            'totalDocumentosPorRevisar',
+            'asesoriasPendientes',
+            'totalAsesoriasPendientes',
+            'alumnosAsignadosList'
+        ));
     }
 
     public function alumno()
@@ -66,6 +87,7 @@ class DashboardController extends Controller
         
         $documentos = [];
         $tienePendiente = false;
+        $asesoriasPendientes = collect();
         
         if ($alumno) {
             // Obtener los documentos de la etapa actual del alumno
@@ -73,8 +95,13 @@ class DashboardController extends Controller
             
             // Verificar si hay alguno pendiente (que ahora es EnRevision)
             $tienePendiente = collect($documentos)->contains('estado', \App\Enums\DocumentoEstado::EnRevision);
+            
+            $asesoriasPendientes = $this->asesoriaRepository->getPorAlumno($alumno->id)
+                ->filter(function ($a) {
+                    return strtolower($a->estado->nombre ?? '') === 'pendiente';
+                });
         }
 
-        return view('alumno.dashboard', compact('alumno', 'documentos', 'tienePendiente'));
+        return view('alumno.dashboard', compact('alumno', 'documentos', 'tienePendiente', 'asesoriasPendientes'));
     }
 }

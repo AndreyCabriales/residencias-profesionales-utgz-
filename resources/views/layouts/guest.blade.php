@@ -15,7 +15,7 @@
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         
-        <style>
+            <style>
             .fade-in {
                 animation: fadeIn 0.8s ease-out forwards;
             }
@@ -31,30 +31,27 @@
                 to { opacity: 1; transform: translateX(0); }
             }
             .bg-split-pattern {
-                background-color: #0D1B2A;
-                background-image: radial-gradient(circle at top right, #1A3A6B 0%, transparent 60%),
-                                  radial-gradient(circle at bottom left, #2D7DD2 0%, transparent 50%);
+                background-color: #020617; /* Slate 950 */
+                background-image: radial-gradient(circle at top right, #064e3b 0%, transparent 60%),
+                                  radial-gradient(circle at bottom left, #047857 0%, transparent 50%);
             }
         </style>
     </head>
-    <body class="font-sans antialiased text-gray-900 bg-white">
-        <div class="min-h-screen flex">
+    <body class="font-sans antialiased text-slate-900 bg-white">
+        <div class="min-h-screen flex overflow-hidden">
             
             <!-- Left Side: Branding & Decoration (Hidden on mobile) -->
             <div class="hidden lg:flex lg:w-1/2 bg-split-pattern relative flex-col justify-between p-12 text-white fade-in">
                 <!-- Top Logo -->
                 <div class="flex items-center gap-3 relative z-10">
-                    <div class="w-12 h-12 bg-white rounded-xl flex items-center justify-center text-utgz-primary font-bold text-2xl shadow-lg">
-                        U
-                    </div>
-                    <span class="font-bold text-2xl tracking-wide">UTGZ</span>
+                    <img src="{{ asset('images/logo_bis.png') }}" alt="Logo BIS UTGZ" class="h-12 object-contain brightness-0 invert opacity-90 hover:opacity-100 transition-opacity">
                 </div>
 
                 <!-- Center Content -->
                 <div class="relative z-10 max-w-lg">
                     <h1 class="text-4xl lg:text-5xl font-extrabold tracking-tight mb-6 leading-tight">
                         Plataforma de <br>
-                        <span class="text-blue-400">Residencias</span>
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-200">Residencias</span>
                     </h1>
                     <p class="text-lg text-gray-300 font-light leading-relaxed">
                         Gestiona, revisa y aprueba el progreso de los estudiantes de manera eficiente y centralizada.
@@ -64,11 +61,13 @@
                 <!-- Bottom Footer -->
                 <div class="relative z-10 text-sm text-gray-400 font-medium">
                     &copy; {{ date('Y') }} Universidad Tecnológica de Gutiérrez Zamora.
+                    <br>
+                    <a href="{{ url('/privacidad') }}" class="text-emerald-400 hover:text-emerald-300 transition mt-2 inline-block">Aviso de Privacidad</a>
                 </div>
 
                 <!-- Abstract overlapping circles for depth -->
-                <div class="absolute top-1/4 right-10 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl"></div>
-                <div class="absolute bottom-1/4 left-10 w-48 h-48 bg-utgz-accent/20 rounded-full blur-3xl"></div>
+                <div class="absolute top-1/4 right-10 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl animate-pulse"></div>
+                <div class="absolute bottom-1/4 left-10 w-48 h-48 bg-teal-500/10 rounded-full blur-3xl animate-pulse delay-700"></div>
             </div>
 
             <!-- Right Side: Login Form Container -->
@@ -88,5 +87,6 @@
                 
             </div>
         </div>
+
     </body>
 </html>

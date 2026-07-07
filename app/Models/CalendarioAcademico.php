@@ -14,18 +14,23 @@ class CalendarioAcademico extends Model
         'descripcion',
         'fecha_inicio',
         'fecha_fin',
-        'tipo_evento',
+        'catalogo_tipo_evento_id',
         'color',
         'creado_por',
         'rol_creador',
-        'activo',
+        'activo'
     ];
 
     protected $casts = [
         'fecha_inicio' => 'datetime',
         'fecha_fin' => 'datetime',
-        'activo' => 'boolean',
+        'activo' => 'boolean'
     ];
+
+    public function tipoEvento()
+    {
+        return $this->belongsTo(CatalogoItem::class, 'catalogo_tipo_evento_id');
+    }
 
     public function creador()
     {

@@ -7,20 +7,46 @@
 
     <!-- Timeline Progress (Oculto si está finalizada) -->
     @if($alumno->estado_residencia !== \App\Enums\ResidenciaEstado::Finalizada)
-        <div class="bg-white rounded-xl shadow-sm p-6 mb-8 fade-in-up">
+        <div class="bg-white rounded-xl shadow-sm p-6 mb-8 fade-in-up" x-data="progresoDashboard()">
             <h3 class="text-lg font-semibold text-utgz-primary mb-6">Etapas del Proceso</h3>
             <div class="relative">
                 <div class="overflow-hidden h-2 mb-4 text-xs flex rounded bg-gray-200">
-                    <div style="width: 25%" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-utgz-accent"></div>
+                    <div :style="`width: ${progreso.porcentaje}%`" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-utgz-accent transition-all duration-1000"></div>
                 </div>
                 <div class="flex justify-between text-xs font-medium text-gray-500">
-                    <span class="text-utgz-accent font-bold">Carta de presentación</span>
-                    <span>Reporte parcial</span>
-                    <span>Reporte final</span>
-                    <span>Evaluación</span>
+                    <span :class="{ 'text-utgz-accent font-bold': progreso.fase_actual >= 1 }">Inicio</span>
+                    <span :class="{ 'text-utgz-accent font-bold': progreso.fase_actual >= 2 }">Seguimiento</span>
+                    <span :class="{ 'text-utgz-accent font-bold': progreso.fase_actual >= 3 }">Cierre</span>
+                    <span :class="{ 'text-utgz-accent font-bold': progreso.fase_actual >= 4 }">Liberación</span>
                 </div>
             </div>
         </div>
+
+        <script>
+            document.addEventListener('alpine:init', () => {
+                Alpine.data('progresoDashboard', () => ({
+                    progreso: {
+                        fase_actual: 1,
+                        porcentaje: 0,
+                        documentos_aprobados: 0,
+                        documentos_totales: 0,
+                        etapas_disponibles: []
+                    },
+                    async init() {
+                        try {
+                            const res = await fetch('/api/v1/dashboard/progreso');
+                            if (res.ok) {
+                                this.progreso = await res.json();
+                                // Dispatch event so the form can use the etapas
+                                window.dispatchEvent(new CustomEvent('progreso-cargado', { detail: this.progreso }));
+                            }
+                        } catch (e) {
+                            console.error("Error fetching progress:", e);
+                        }
+                    }
+                }));
+            });
+        </script>
     @endif
 
     <!-- Header and Greeting -->
@@ -34,55 +60,65 @@
     </div>
 
     <!-- Cards Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8 fade-in-up delay-100">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-10 fade-in-up delay-100">
         <!-- Estado -->
-        <div class="bg-white p-5 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-1">
-            <h4 class="text-sm font-medium text-gray-500 mb-2">Estado Actual</h4>
+        <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-lg shadow-gray-200/40 hover:shadow-xl transition-all duration-300 hover:-translate-y-1.5 group">
+            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 group-hover:text-emerald-500 transition-colors">Estado Actual</h4>
             @if($alumno->estado_residencia === \App\Enums\ResidenciaEstado::Finalizada)
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
                     Finalizado
                 </span>
             @elseif($tienePendiente)
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-amber-50 text-amber-700 border border-amber-200">
                     En revisión
                 </span>
             @elseif(count($documentos) > 0 && $documentos->first()->estado === \App\Enums\DocumentoEstado::Aprobado)
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-blue-50 text-blue-700 border border-blue-200">
                     Aprobado
                 </span>
             @elseif(count($documentos) > 0 && $documentos->first()->estado === \App\Enums\DocumentoEstado::Rechazado)
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium bg-red-100 text-red-800">
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-rose-50 text-rose-700 border border-rose-200">
                     Corrección
                 </span>
             @else
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium bg-gray-100 text-gray-800">
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-slate-100 text-slate-700 border border-slate-200">
                     Pendiente
                 </span>
             @endif
         </div>
 
         <!-- Asesor Académico -->
-        <div class="bg-white p-5 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-1">
-            <h4 class="text-sm font-medium text-gray-500 mb-1">Académico</h4>
-            <p class="font-semibold text-gray-800 truncate" title="{{ $alumno->asignacion->asesor->user->name ?? 'No asignado' }}">{{ $alumno->asignacion->asesor->user->name ?? 'No asignado' }}</p>
+        <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-lg shadow-gray-200/40 hover:shadow-xl transition-all duration-300 hover:-translate-y-1.5 group">
+            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 group-hover:text-emerald-500 transition-colors">Académico</h4>
+            <p class="font-bold text-slate-800 text-lg truncate" title="{{ $alumno->asignacion->asesor->user->name ?? 'No asignado' }}">{{ $alumno->asignacion->asesor->user->name ?? 'No asignado' }}</p>
         </div>
 
         <!-- Asesor Organizacional -->
-        <div class="bg-white p-5 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-1">
-            <h4 class="text-sm font-medium text-gray-500 mb-1">Organizacional</h4>
-            <p class="font-semibold text-gray-800 truncate" title="{{ $alumno->companyAdvisor->nombre ?? 'Pendiente' }}">{{ $alumno->companyAdvisor->nombre ?? 'Pendiente' }}</p>
+        <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-lg shadow-gray-200/40 hover:shadow-xl transition-all duration-300 hover:-translate-y-1.5 group">
+            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 group-hover:text-emerald-500 transition-colors">Organizacional</h4>
+            <p class="font-bold text-slate-800 text-lg truncate" title="{{ $alumno->companyAdvisor->nombre ?? 'Pendiente' }}">{{ $alumno->companyAdvisor->nombre ?? 'Pendiente' }}</p>
         </div>
 
-        <!-- Empresa -->
-        <div class="bg-white p-5 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-1">
-            <h4 class="text-sm font-medium text-gray-500 mb-1">Empresa</h4>
-            <p class="font-semibold text-gray-800 truncate" title="{{ $alumno->companyAdvisor->empresa ?? 'No registrada' }}">{{ $alumno->companyAdvisor->empresa ?? 'No registrada' }}</p>
+        <!-- Asesorías -->
+        <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-lg shadow-gray-200/40 hover:shadow-xl transition-all duration-300 hover:-translate-y-1.5 relative group">
+            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 group-hover:text-emerald-500 transition-colors">Asesorías</h4>
+            <p class="font-bold text-slate-800 text-lg truncate">
+                @if(isset($asesoriasPendientes) && $asesoriasPendientes->count() > 0)
+                    <span class="text-amber-600">{{ $asesoriasPendientes->count() }} por confirmar</span>
+                    <span class="absolute top-6 right-6 flex h-3 w-3">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-3 w-3 bg-amber-500"></span>
+                    </span>
+                @else
+                    Al día
+                @endif
+            </p>
         </div>
 
         <!-- Última Actualización -->
-        <div class="bg-white p-5 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-1">
-            <h4 class="text-sm font-medium text-gray-500 mb-1">Actualización</h4>
-            <p class="font-semibold text-gray-800">
+        <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-lg shadow-gray-200/40 hover:shadow-xl transition-all duration-300 hover:-translate-y-1.5 group">
+            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 group-hover:text-emerald-500 transition-colors">Actualización</h4>
+            <p class="font-bold text-slate-800 text-lg">
                 @if(count($documentos) > 0)
                     {{ $documentos->first()->updated_at->diffForHumans() }}
                 @else
@@ -93,7 +129,10 @@
     </div>
 
     <!-- Main Action Card -->
-    <div class="bg-white rounded-xl shadow-sm p-8 text-center max-w-2xl mx-auto border-t-4 border-utgz-accent fade-in-up delay-200">
+    <div class="bg-white rounded-2xl shadow-xl shadow-gray-200/50 p-8 md:p-10 text-center max-w-3xl mx-auto border-t-4 border-utgz-accent fade-in-up delay-200 relative overflow-hidden">
+        <!-- Abstract Decoration for the main card -->
+        <div class="absolute -top-24 -right-24 w-48 h-48 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -bottom-24 -left-24 w-48 h-48 bg-teal-500/10 rounded-full blur-3xl pointer-events-none"></div>
         
         @if(session('success'))
             <div class="mb-4 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded relative text-sm" role="alert">
@@ -165,6 +204,25 @@
                                 <p class="text-red-700 mt-1 text-sm">Tu asesor ha solicitado correcciones. Por favor atiende la siguiente observación antes de volver a subir tu documento:</p>
                                 <div class="mt-3 p-3 bg-white rounded border border-red-100 text-red-800 text-sm font-medium">
                                     "{{ $documentos->first()->retroalimentacion }}"
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
+                @if(isset($asesoriasPendientes) && $asesoriasPendientes->count() > 0)
+                    <div class="mb-6 p-4 bg-orange-50 border border-orange-200 rounded-lg text-left">
+                        <div class="flex items-start">
+                            <svg class="h-6 w-6 text-orange-600 mr-3 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                            <div>
+                                <p class="text-orange-800 font-bold">Tienes Asesorías Pendientes de Confirmar</p>
+                                <p class="text-orange-700 mt-1 text-sm">Tu asesor te ha agendado una o más asesorías. Por favor ingresa al calendario para confirmarlas o solicitar reprogramación.</p>
+                                <div class="mt-3">
+                                    <a href="{{ route('calendario.index') }}" class="inline-block px-4 py-2 bg-white text-orange-600 border border-orange-300 rounded hover:bg-orange-100 text-sm font-semibold transition-colors">
+                                        Ir al Calendario
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -290,7 +348,16 @@
                         </script>
                     @endif
                     
-                    <div>
+                    <!-- Select para Etapa -->
+                    <div x-data="{ etapas: [] }" @progreso-cargado.window="etapas = $event.detail.etapas_disponibles">
+                        <label class="block mb-2 text-sm font-medium text-gray-900" for="etapa_id">Documento a subir <span class="text-red-500">*</span></label>
+                        <select id="etapa_id" name="etapa_id" required class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-utgz-accent focus:border-utgz-accent mb-4">
+                            <option value="">Selecciona un documento</option>
+                            <template x-for="etapa in etapas" :key="etapa.id">
+                                <option :value="etapa.id" x-text="etapa.nombre + ' (' + etapa.codigo + ')'"></option>
+                            </template>
+                        </select>
+                        
                         <label class="block mb-2 text-sm font-medium text-gray-900" for="documento">Seleccionar PDF (Máx 5MB) <span class="text-red-500">*</span></label>
                         <input class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none file:mr-4 file:py-2 file:px-4 file:border-0 file:text-sm file:font-semibold file:bg-utgz-primary file:text-white hover:file:bg-utgz-primary/90 transition-colors" id="documento" name="documento" type="file" accept=".pdf" required>
                     </div>

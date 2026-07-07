@@ -4,6 +4,7 @@ namespace App\Repositories\Contracts;
 
 interface AsesoriaRepositoryInterface
 {
+    public function getAll();
     public function getPorAlumno(int $alumnoId);
     public function getPorAsesor(int $asesorId);
     public function findById(int $id);

@@ -42,4 +42,9 @@ class AsesoriaPolicy
     {
         return $user->hasRole('asesor') && $user->asesor && $user->asesor->id === $Asesoria->asesor_id;
     }
+
+    public function confirm(User $user, Asesoria $Asesoria): bool
+    {
+        return $user->hasRole('alumno') && $user->alumno && $user->alumno->id === $Asesoria->alumno_id;
+    }
 }

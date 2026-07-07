@@ -10,11 +10,9 @@ Responde a las preguntas más críticas sobre las decisiones arquitectónicas qu
 "Elegimos Laravel (PHP 8) porque para un sistema institucional monolítico que requiere gestión robusta de sesiones, bases de datos relacionales complejas y control estricto de roles, Laravel es el estándar de la industria. Si hubiéramos usado Node.js (Express), tendríamos que haber 'armado' nuestro propio framework instalando decenas de librerías para ORM, seguridad (CSRF, XSS), envío de correos y subida de archivos, asumiendo riesgos de seguridad. Laravel nos provee todo eso empaquetado, testeado y blindado, permitiéndonos enfocarnos en resolver el problema de la UTGZ en lugar de reinventar la rueda técnica."
 
 ### 2. ¿Qué aporta `Spatie Laravel-Permission` que no podrían haber hecho manualmente con un campo `rol` en la tabla usuarios?
-**Respuesta sugerida:**
 "Tener un simple campo `rol = 'coordinador'` es rígido. Spatie nos permite escalar. Si mañana la universidad decide crear el rol de 'Subcoordinador', que puede ver los documentos pero no puede aprobarlos, un campo `rol` nos obligaría a llenar el código de múltiples `if (rol == 'coordinador' || rol == 'subcoordinador')`. Con Spatie, el código solo pregunta `if($user->can('ver documentos'))`. Nosotros solo creamos el rol en la base de datos y le asignamos ese permiso, sin necesidad de tocar ni una sola línea de código fuente."
 
 ### 3. ¿Por qué separar la lógica en `Services` y `Repositories` en lugar de hacerlo todo en el Controller?
-**Respuesta sugerida:**
 "Para cumplir con el Principio de Responsabilidad Única (SRP) y facilitar la mantenibilidad. Los Controladores ('Fat Controllers') se vuelven inmanejables si allí mismo validamos la request, subimos el PDF al disco duro, hacemos un `where()` complejo en la base de datos y retornamos la vista. 
 En nuestra arquitectura:
 - El **Controller** solo recibe la petición.
