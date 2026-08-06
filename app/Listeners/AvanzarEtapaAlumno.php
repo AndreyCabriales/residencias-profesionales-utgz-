@@ -25,12 +25,7 @@ class AvanzarEtapaAlumno
         $documento = $event->documento;
         $alumno = $documento->alumno;
 
-        // Registrar en el Activity Log
-        $estadoTexto = $documento->estado === DocumentoEstado::Aprobado ? 'aprobado' : 'rechazado';
-        activity()
-            ->performedOn($documento)
-            ->event('documento_revisado')
-            ->log("El documento {$documento->etapa->nombre} ha sido {$estadoTexto}.");
+
 
         // Si el documento fue aprobado, verificamos si el alumno ya completó todas las fases
         if ($documento->estado === DocumentoEstado::Aprobado) {
@@ -43,10 +38,7 @@ class AvanzarEtapaAlumno
                 $alumno->fecha_finalizacion = now();
                 $alumno->save();
                 
-                activity()
-                    ->performedOn($alumno)
-                    ->event('proceso_finalizado')
-                    ->log('El alumno ha completado todas las fases de estadía profesional.');
+
             }
         }
     }
